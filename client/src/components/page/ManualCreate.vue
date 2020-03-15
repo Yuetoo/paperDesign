@@ -35,8 +35,8 @@
                 <el-button type="primary" style="margin-top:5%;" @click="createVisible = true">创建试卷</el-button>
             </div>
         </div>
-         <el-dialog :visible.sync="createVisible" width="90%">
-           <div class="handle-box">
+         <el-dialog title="请选择试题" :visible.sync="createVisible" width="90%">
+           <div class="handle-box" style="padding-top:0px;">
                <el-row>
                 <el-select v-model="query.knowledgePoint" placeholder="知识点" class="handle-select mr10" style="width:200px;">
                     <el-option key="1" label="编译过程概述" value="编译过程概述"></el-option>
@@ -71,6 +71,8 @@
                 <el-table
                 :data="tableData"
                 border
+                :row-style="{height:'16px'}"
+                :header-cell-style="{height:'16px'}"
                 height="300"
                 class="table"
                 ref="multipleTable"
@@ -96,21 +98,42 @@
                 <el-table-column prop="knowledgePoint" width='180' label="知识点"></el-table-column>
                 <el-table-column prop="courseGoal" width='100' label="课程目标"></el-table-column>
                 <el-table-column prop="score" sortable label="分值" width='80'></el-table-column>
-                <el-table-column prop="difficulty" sortable label="难度系数" width='100'></el-table-column>
+                <el-table-column prop="difficulty" sortable label="难度系数" width='120'></el-table-column>
                 
                 </el-table>
              
 
            
-                <div>
-                    <el-button type="primary" @click="selectItems" icon="icon el-icon-d-arrow-right">添加到试卷</el-button>
-                </div>
+                <el-row style="margin:40px;width:100%;">
+                    <el-col :span="5">
+                        <el-button type="primary" @click="selectItems" icon="icon el-icon-d-arrow-right">添加到试卷</el-button>
+                    </el-col>
+                    <el-col :span="5">
+                        <div>总分值：</div>
+                        <el-progress :percentage="70"></el-progress>
+                        <div>难度系数：</div>
+                        <el-progress :percentage="50" status="exception"></el-progress>
+                    </el-col>
+                    <el-col :span="3">
+                        <el-progress width="90" type="circle" :percentage="70"></el-progress>
+                        <div>课程目标1占分值</div>
+                    </el-col>
+                    <el-col :span="3">
+                        <el-progress type="circle" width="90" :percentage="30" ></el-progress>
+                        <div>课程目标2占分值</div>
+                    </el-col>
+                        
+                        
+                        
+                  
+                </el-row>
             
-
+                <div style="margin-bottom:20px;font-size:18px;">试卷题目列表</div>
             
                  <el-table
                 :data="resultData"
-               
+                 :row-style="{height:'16px'}"
+                :header-cell-style="{height:'16px'}"
                 height="300"
                 class="table"
                 ref="multipleTable"
