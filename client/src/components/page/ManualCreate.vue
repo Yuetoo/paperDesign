@@ -32,10 +32,10 @@
                 </el-collapse-item>
             </el-collapse>
             <div style="text-align:center">
-                <el-button type="primary" style="margin-top:5%;" @click="createVisible = true">创建试卷</el-button>
+                <el-button type="primary" style="margin-top:5%;" @click="openDialog">创建试卷</el-button>
             </div>
         </div>
-         <el-dialog title="请选择试题" :visible.sync="createVisible" width="90%">
+         <el-dialog title="请选择试题" :visible.sync="createVisible" width='90%'>
            <div class="handle-box" style="padding-top:0px;">
                <el-row>
                 <el-select v-model="query.knowledgePoint" placeholder="知识点" class="handle-select mr10" style="width:200px;">
@@ -60,8 +60,6 @@
                     <el-option key="6" label="计算题" value="计算题"></el-option>
                     <el-option key="7" label="程序设计题" value="程序设计题"></el-option>
                 </el-select>
-               
-                 <el-input type="number" v-model="query.score" placeholder="分值" style="width:10%;margin-right:2%;"></el-input>
                
                 <el-button type="success" icon="el-icon-search" @click="handleSearch">搜索</el-button>
                 <el-button type="warning" icon="el-icon-refresh" @click="reset">重置</el-button>
@@ -104,74 +102,77 @@
              
 
            
-                <el-row style="margin:40px;width:100%;">
-                    <el-col :span="5">
+                <el-row style="margin:40px;">
+                    <el-col :span="5" style="margin-top:2%;margin-left:5%;">
                         <el-button type="primary" @click="selectItems" icon="icon el-icon-d-arrow-right">添加到试卷</el-button>
                     </el-col>
-                    <el-col :span="5">
+                    <el-col :span="7" style="margin-right:5%;">
                         <div>总分值：</div>
-                        <el-progress :percentage="70"></el-progress>
+                        <el-progress :percentage="totalScore" :color="scoreColor"></el-progress>
                         <div>难度系数：</div>
-                        <el-progress :percentage="50" status="exception"></el-progress>
+                        <el-progress :percentage="difficulty" :color="difficultyColor"></el-progress>
                     </el-col>
-                    <el-col :span="3">
-                        <el-progress width="90" type="circle" :percentage="70"></el-progress>
+                    <el-col style="text-align:center;margin-right:4%;" :span="4">
+                        <el-progress :width="90" type="circle" color="#7B68EE" :percentage="course1Score"></el-progress>
                         <div>课程目标1占分值</div>
                     </el-col>
-                    <el-col :span="3">
-                        <el-progress type="circle" width="90" :percentage="30" ></el-progress>
+                    <el-col style="text-align:center" :span="4">
+                        <el-progress type="circle" :width='90' color="#F08080" :percentage="course2Score" ></el-progress>
                         <div>课程目标2占分值</div>
                     </el-col>
-                        
-                        
-                        
-                  
+                           
                 </el-row>
             
                 <div style="margin-bottom:20px;font-size:18px;">试卷题目列表</div>
             
-                 <el-table
-                :data="resultData"
-                 :row-style="{height:'16px'}"
-                :header-cell-style="{height:'16px'}"
-                height="300"
-                class="table"
-                ref="multipleTable"
-                header-cell-class-name="table-header"
-                @selection-change="handleSelectionChange"
-            >
-                <el-table-column type="selection" width="50" align="center"></el-table-column>
-                <el-table-column prop="content" label="题目" show-overflow-tooltip>
-                   
-                </el-table-column>
-                <el-table-column label="题目图片" width="80" align="center">
-                    <template slot-scope="scope">
-                        <el-image
-                            v-if="scope.row.qPicture"
-                            class="table-td-thumb"
-                            :src="scope.row.qPicture"
-                            :preview-src-list="[scope.row.qPicture]"
-                        ></el-image>
-                    </template>
-                </el-table-column>
-              
-                <el-table-column prop="questionType" width='100' label="题型"></el-table-column>
-                <el-table-column prop="knowledgePoint" width='180' label="知识点"></el-table-column>
-                <el-table-column prop="courseGoal" width='100' label="课程目标"></el-table-column>
-                <el-table-column prop="score" sortable label="分值" width='80'></el-table-column>
-                <el-table-column prop="difficulty" sortable label="难度系数" width='100'></el-table-column>
-                 <el-table-column width='80' label="操作">
+                    <el-table
+                    :data="resultData"
+                    :row-style="{height:'16px'}"
+                    :header-cell-style="{height:'16px'}"
+                    height="300"
+                    class="table"
+                    header-cell-class-name="table-header"
+                    >
+               
+                    <el-table-column prop="content" label="题目" show-overflow-tooltip>
+                    
+                    </el-table-column>
+                    <el-table-column label="题目图片" width="80" align="center">
                         <template slot-scope="scope">
-                            <el-button
-                            size="mini"
-                            type="danger"
-                            @click.native.prevent="handleDelete(scope.$index, scope.row,resultData)">删除</el-button>
+                            <el-image
+                                v-if="scope.row.qPicture"
+                                class="table-td-thumb"
+                                :src="scope.row.qPicture"
+                                :preview-src-list="[scope.row.qPicture]"
+                            ></el-image>
                         </template>
                     </el-table-column>
-                </el-table>
-                   
                 
-          
+                    <el-table-column prop="questionType" width='100' label="题型"></el-table-column>
+                    <el-table-column prop="knowledgePoint" width='180' label="知识点"></el-table-column>
+                    <el-table-column prop="courseGoal" width='100' label="课程目标"></el-table-column>
+                    <el-table-column prop="score" sortable label="分值" width='80'></el-table-column>
+                    <el-table-column prop="difficulty" sortable label="难度系数" width='100'></el-table-column>
+                    <el-table-column width='80' label="操作">
+                            <template slot-scope="scope">
+                                <el-button
+                                size="mini"
+                                type="danger"
+                                @click.native.prevent="handleDelete(scope.$index, scope.row,resultData)">删除</el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                   
+                    <el-button type="primary" @click="savePaper" style="margin-top:10px;margin-left:90%;">保存试卷</el-button>        
+        </el-dialog>
+        <el-dialog title="请选择试卷" :visible.sync="selectPaper">
+            <el-table 
+            :data="paperList"
+            :show-header="false"
+            :height="200"
+            @cell-click="handle">
+                <el-table-column property="paperHeader" style="cursor:pointer" label="试卷名称"></el-table-column>
+            </el-table>
         </el-dialog>
     </div>
    
@@ -190,49 +191,25 @@ export default {
                 questionType:'',
                 score:''
             },
-
-           
-
-            tableKey: [{
-                name: '题目',
-                value: 'content',
-                label: 100
-              },{
-                name: '题目图片',
-                value: 'qPicture',
-                label: 100
-              },{
-                  name:'题型',
-                  value:'questionType',
-                  label:100
-              },{
-                  name:'知识点',
-                  value:'knowledgePoint',
-                  label:100
-              },{
-                  name:'课程目标',
-                  value:'courseGoal',
-                  label:100
-              },
-              {
-                  name:'分值',
-                  value:'score',
-                  label:50
-              },
-              {
-                  name:'难度系数',
-                  value:'difficulty',
-                  label:50
-              }],
+            difficultyColor:[{color:"#F5DEB3",percentage:50},
+                        {color:"#F4A460",percentage:80},
+                        {color:"#FF4500",percentage:100}],
+            scoreColor:[{color:"#66CDAA",percentage:50},
+                        {color:"#5F9EA0",percentage:80},
+                        {color:"#20B2AA",percentage:100}],
+            totalScore:0,
+            difficulty:0,
+            course1Score:0,
+            course2Score:0,
 
             tableData:[],
             resultData:[],
+            paperList:[],
             
             multipleSelection:[],
-            
-            filterTableDataEnd:[],
       
             createVisible:false,
+            selectPaper:false,
             
             idx: -1,
             id: -1,
@@ -240,7 +217,6 @@ export default {
         };
     },
     created() {
-        this.getData();
     },
     methods: {
         // 获取 easy-mock 的模拟数据
@@ -257,12 +233,39 @@ export default {
                             console.log(error);
                         });
         },
+
+        openDialog(){
+            this.createVisible = true;
+            this.reset();
+             this.resultData = [];
+               this.difficulty = 0;
+               this.course1Score = 0;
+               this.course2Score = 0;
+               this.totalScore = 0;
+        },
+
         //重置
         reset(){
             this.query = {};
             this.getData();  
         },
-       
+         // 触发搜索按钮
+        handleSearch() {
+           
+           axios.get(this.GLOBAL.url+"question/search",{
+           params:{
+               'knowledgePoint':this.query.knowledgePoint,
+               'courseGoal':this.query.courseGoal,
+               'questionType':this.query.questionType
+               }
+            })
+           .then(res =>{
+              console.log(res.data.data);
+              this.tableData = res.data.data;
+              this.currentPage = 1;
+           })
+            
+        },
        
         /**
          * 跟据当前索引位置删除数据
@@ -270,11 +273,8 @@ export default {
          */
         handleDelete(index, row,resultData) {
           resultData.splice(index,1);//右边删除数据
-          this.filterBeforeData.push(row);
-          this.resetData = this.filterBeforeData;
-          //根据删除后得到的数据再进行一次搜索展示
-          this.realTime();
-          this.$emit('dispatchData',this.resultData);
+          this.tableData.push(row);
+          this.calcul();
         },
         handleSelectionChange(val){
           this.multipleSelection = val;
@@ -282,14 +282,9 @@ export default {
         selectItems:function () {
           //等同下一行代码---数组合并,频繁使用用concat会造成内存浪费
           this.resultData.push.apply(this.resultData,this.multipleSelection);
-          //把获取的数据发送到父组件
-          this.$emit('dispatchData',this.resultData);
-          //在返回push数据后剩余的待选列表所有数据赋值到resetData中，然后再在待选列表中显示检索删除被剩余的数据
-            this.filterBeforeData = this.overlap(this.filterBeforeData,this.resultData);
-            this.resetData = this.filterBeforeData;
-          //删除左边被选中的数据,返回待选列表中被剩余的数据
+          this.multipleSelection = [];
           this.tableData = this.overlap(this.tableData,this.resultData);
-          
+          this.calcul();
         },
         /**
          * 删除选中item
@@ -313,21 +308,71 @@ export default {
             }
           }
           return arr3;
-        },
-      },
-     
-      watch:{
-        receiveData(val){
-          this.tableData = val;
-          this.resetData = val;
-          this.filterBeforeData =val;
-        },
-        isCheckValue(val){
-            this.resultData = val;
-            this.$emit('dispatchData',this.resultData);
-        }
+        }, 
 
+        calcul() {
+            this.totalScore = 0;
+            this.course1Score = 0;
+            this.course2Score = 0;
+            this.difficulty = 0;
+            for(let i=0;i<this.resultData.length;i++){
+                this.totalScore = this.totalScore + this.resultData[i].score;
+                this.course1Score = this.addupScore(1);
+                this.course2Score = this.addupScore(2);
+            }
+        },
+
+    addupScore(courseGoal){
+        let temp = [],total=0;
+        if(courseGoal == 1){
+            temp = this.resultData.filter(item =>{
+                return item.courseGoal === '课程目标1'
+            })
+        }else{
+             temp = this.resultData.filter(item =>{
+                return item.courseGoal === '课程目标2'
+            })
+        }
+        for(let i = 0;i<temp.length;i++){
+            total = total + temp[i].score;
+        }
+        return total;
     },
+    savePaper(){
+         let param = {};
+         var attr = ['question1','question2','question3','question4','question5','question6','question7','question8','question9','question10','question11','question12','question13','question14','question15','question16','question17','question18','question19','question20'];
+         this.$prompt('请输入试卷名称', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消'
+        }).then(({ value }) => {
+            param['paperHeader'] = value;
+            param['difficulty'] = this.difficulty;
+            param['course1Score'] = this.course1Score;
+            param['course2Score'] = this.course2Score;
+            let questionIds = this.resultData.map(item =>{
+                return item.questionId;
+            });
+            for(let i = 0;i<questionIds.length;i++){
+                param[attr[i]] = questionIds[i];
+            }
+            console.log(param);
+            axios.post(this.GLOBAL.url+"paper/createPaper",param)
+            .then(res =>{
+               if(res.data.code===0){
+                   this.$message.success("保存成功！");
+               }else{
+                   this.$message.error("保存失败！");
+               }
+               this.createVisible = false;  
+            })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '取消保存！'
+          });       
+        });
+    },
+}
 };
 </script>
 

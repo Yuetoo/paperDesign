@@ -8,6 +8,7 @@ var logger = require('morgan');
 
 var loginRouter = require('./routes/login');
 var questionRouter = require('./routes/questionAdmin');
+var paperRouter = require('./routes/paperAdmin');
 
 var url = 'http://localhost:8080';
 
@@ -57,6 +58,7 @@ app.get('/public/*', function (req, res) {
 //路由模块
 app.use('/login',loginRouter);
 app.use('/question',questionRouter);
+app.use('/paper',paperRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

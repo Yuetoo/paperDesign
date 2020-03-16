@@ -22,7 +22,7 @@ var paper = sequelize.define('paper',{
         type:Sequelize.INTEGER,
         allowNull: false,
     },
-    course1Score:{
+    course2Score:{
         type:Sequelize.INTEGER,
         allowNull: false,
     },
@@ -41,6 +41,11 @@ var paper = sequelize.define('paper',{
     question13:Sequelize.INTEGER,
     question14:Sequelize.INTEGER,
     question15:Sequelize.INTEGER,
+    question16:Sequelize.INTEGER,
+    question17:Sequelize.INTEGER,
+    question18:Sequelize.INTEGER,
+    question19:Sequelize.INTEGER,
+    question20:Sequelize.INTEGER,
 
 },{
     timestamps: false,   // 不要默认时间戳

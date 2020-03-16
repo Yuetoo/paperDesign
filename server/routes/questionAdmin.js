@@ -41,7 +41,6 @@ var question = require('../models/question');
 router.get('/questionList', function (req, res, next) {
     question.findAll().then(result => {
         if(result){
-           
             res.json({
                 code:0,
                 data:result,
