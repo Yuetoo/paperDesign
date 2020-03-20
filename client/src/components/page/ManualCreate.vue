@@ -165,15 +165,6 @@
                    
                     <el-button type="primary" @click="savePaper" style="margin-top:10px;margin-left:90%;">保存试卷</el-button>        
         </el-dialog>
-        <el-dialog title="请选择试卷" :visible.sync="selectPaper">
-            <el-table 
-            :data="paperList"
-            :show-header="false"
-            :height="200"
-            @cell-click="handle">
-                <el-table-column property="paperHeader" style="cursor:pointer" label="试卷名称"></el-table-column>
-            </el-table>
-        </el-dialog>
     </div>
    
 </template>
@@ -189,7 +180,6 @@ export default {
                 knowledgePoint: '',
                 courseGoal: '',
                 questionType:'',
-                score:''
             },
             difficultyColor:[{color:"#F5DEB3",percentage:50},
                         {color:"#F4A460",percentage:80},
@@ -204,15 +194,12 @@ export default {
 
             tableData:[],
             resultData:[],
-            paperList:[],
+           
             
             multipleSelection:[],
       
             createVisible:false,
             selectPaper:false,
-            
-            idx: -1,
-            id: -1,
            
         };
     },
@@ -352,6 +339,7 @@ export default {
             let questionIds = this.resultData.map(item =>{
                 return item.questionId;
             });
+            
             for(let i = 0;i<questionIds.length;i++){
                 param[attr[i]] = questionIds[i];
             }
