@@ -329,8 +329,6 @@ export default {
             })
                 .then(() => {
                     console.log("delList1:",delList);
-                   
-                   
                     axios.post(this.GLOBAL.url + 'question/deleteQuestion',{param:delList})
                     .then(res =>{
                         console.log(res);

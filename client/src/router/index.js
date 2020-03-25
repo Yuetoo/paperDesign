@@ -6,12 +6,13 @@ Vue.use(Router);
 export default new Router({
     
     routes: [
+       
         {
-            path: '/',
-            redirect: '/dashboard'
+            path:'/index',
+            redirect:'/dashboard'
         },
         {
-            path: '/',
+            path: '/index',
             component: () => import(/* webpackChunkName: "home" */ '../components/common/Home.vue'),
             meta: { title: '自述文件' },
             children: [
@@ -87,12 +88,17 @@ export default new Router({
                     path: '/403',
                     component: () => import(/* webpackChunkName: "403" */ '../components/page/403.vue'),
                     meta: { title: '403' }
+                },
+                {
+                    path:'/modifyPassword',
+                    component:() => import('../components/page/modifyPassword.vue'),
+                    meta:{title:'修改密码'}
                 }
                
             ]
         },
         {
-            path: '/login',
+            path: '/',
             component: () => import(/* webpackChunkName: "login" */ '../components/page/Login.vue'),
             meta: { title: '登录' }
         },

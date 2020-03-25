@@ -115,6 +115,15 @@ export default {
                     title: '试卷分析'
                 } ,
                 {
+                    icon:'el-icon-lx-people',
+                    index:'2',
+                    title:'个人中心',
+                    subs:[{
+                        index:'modifyPassword',
+                        title:"修改密码"
+                    }]
+                },
+                {
                     icon: 'el-icon-lx-copy',
                     index: 'tabs',
                     title: 'tab选项卡'

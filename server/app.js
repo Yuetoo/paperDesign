@@ -2,11 +2,12 @@ var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
+var session = require('express-session');
 var logger = require('morgan');
 
 
 
-var loginRouter = require('./routes/login');
+var userRouter = require('./routes/userAdmin');
 var questionRouter = require('./routes/questionAdmin');
 var paperRouter = require('./routes/paperAdmin');
 
@@ -34,10 +35,8 @@ app.all('*',function (req, res, next) {
 　next();　
 });
 
- // app.use(session(config.session));
+ 
 console.log("mysql服务器：" + config.mysql.user);
-
-
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -49,14 +48,13 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 
-
 app.use(express.static(path.join(__dirname, 'public')));
 app.get('/public/*', function (req, res) {
   res.sendfile(__dirname + "/" + req.url)
 });
 
 //路由模块
-app.use('/login',loginRouter);
+app.use('/user',userRouter);
 app.use('/question',questionRouter);
 app.use('/paper',paperRouter);
 

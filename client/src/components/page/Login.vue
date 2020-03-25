@@ -49,7 +49,7 @@ export default {
                 if (valid) {
                     var vm = this;
                     
-                    axios.get(this.GLOBAL.url+'login',{
+                    axios.get(this.GLOBAL.url+'user',{
                         params:{'userId':this.param.userId,'password':this.param.password}
                     })            
                         .then(function (response) {       //收到的数据
@@ -57,9 +57,11 @@ export default {
                            
                            if(response.data.code===0){
                                 vm.$message.success('登录成功');
-                                localStorage.setItem('user',JSON.stringify(response.data.data));
-                                
-                                vm.$router.push('/').catch(err => { console.log(err) });
+                                let userName = response.data.data.userName,
+                                    userId = response.data.data.userId;
+                                sessionStorage.setItem('userName',userName);
+                                sessionStorage.setItem('userId',userId);
+                                vm.$router.push('/index').catch(err => { console.log(err) });
                             }else if(response.data.code===1){
                                vm.$message.warning("登录名密码错误！");
                             }else{

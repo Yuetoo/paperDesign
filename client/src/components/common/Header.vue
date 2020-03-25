@@ -55,20 +55,20 @@ export default {
     },
     computed: {
         username() {
-            let user = JSON.parse(localStorage.getItem('user'));
-            return user.userName;
+            return sessionStorage.getItem('userName');
+           
         }
     },
     methods: {
         // 用户名下拉菜单选择事件
         handleCommand(command) {
             if (command == 'loginout') {
-                localStorage.removeItem('user');
-                
-                this.$router.push('/login');
+                sessionStorage.removeItem('userName');
+                sessionStorage.removeItem('userId');
+                this.$router.push('/');
             }
             else if (command == 'modify_password'){
-
+                this.$router.push('/modifyPassword');
             }
         },
       
