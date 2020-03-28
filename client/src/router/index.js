@@ -9,7 +9,7 @@ export default new Router({
        
         {
             path:'/index',
-            redirect:'/dashboard'
+            redirect:'/home'
         },
         {
             path: '/index',
@@ -17,8 +17,8 @@ export default new Router({
             meta: { title: '自述文件' },
             children: [
                 {
-                    path: '/dashboard',
-                    component: () => import(/* webpackChunkName: "dashboard" */ '../components/page/Dashboard.vue'),
+                    path: '/home',
+                    component: () => import(/* webpackChunkName: "dashboard" */ '../components/page/Index.vue'),
                     meta: { title: '系统首页' }
                 },
                 {
@@ -42,9 +42,9 @@ export default new Router({
                     meta: { title: '手动组卷' }
                 },
                 {
-                    path: '/tabs',
-                    component: () => import(/* webpackChunkName: "tabs" */ '../components/page/Tabs.vue'),
-                    meta: { title: 'tab选项卡' }
+                    path: '/bulletin',
+                    component: () => import(/* webpackChunkName: "tabs" */ '../components/page/Bulletin.vue'),
+                    meta: { title: '通知公告' }
                 },
 
                 {
@@ -76,18 +76,15 @@ export default new Router({
                     component: () => import(/* webpackChunkName: "chart" */ '../components/page/Analysis.vue'),
                     meta: { title: '试卷分析' }
                 },
-               
-                
-                
                 {
                     path: '/404',
                     component: () => import(/* webpackChunkName: "404" */ '../components/page/404.vue'),
                     meta: { title: '404' }
                 },
                 {
-                    path: '/403',
-                    component: () => import(/* webpackChunkName: "403" */ '../components/page/403.vue'),
-                    meta: { title: '403' }
+                    path: '/userAdmin',
+                    component: () => import(/* webpackChunkName: "403" */ '../components/page/UserAdmin.vue'),
+                    meta: { title: '用户管理' }
                 },
                 {
                     path:'/modifyPassword',
@@ -100,7 +97,8 @@ export default new Router({
         {
             path: '/',
             component: () => import(/* webpackChunkName: "login" */ '../components/page/Login.vue'),
-            meta: { title: '登录' }
+            meta: { title: '登录'}
+           
         },
         {
             path: '*',

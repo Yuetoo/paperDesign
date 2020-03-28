@@ -73,9 +73,9 @@
                 <el-table-column prop="questionType" label="题型"></el-table-column>
                 <el-table-column prop="knowledgePoint" label="知识点"></el-table-column>
                 <el-table-column prop="courseGoal" label="课程目标"></el-table-column>
-                <el-table-column prop="difficulty" label="难度系数" width='50'></el-table-column>
-                <el-table-column prop="score" label="分值" width='50'></el-table-column>
-                <el-table-column prop="gpa" label="平均分" width='50'></el-table-column>
+                <el-table-column prop="difficulty" sortable label="难度系数" width='50'></el-table-column>
+                <el-table-column prop="score" sortable label="分值" width='50'></el-table-column>
+                <el-table-column prop="gpa" sortable label="平均分" width='50'></el-table-column>
                 <el-table-column label="操作" width="140" align="center">
                     <template slot-scope="scope">
                         <el-button

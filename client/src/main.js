@@ -24,6 +24,18 @@ const i18n = new VueI18n({
     messages
 });
 
+router.beforeEach((to, from, next) => {
+    const role = sessionStorage.getItem('userName');
+    if (!role && to.path !== '/') {
+        next('/');
+    } else {
+        next();
+    }
+});
+
+
+
+
 new Vue({
     router,
     i18n,

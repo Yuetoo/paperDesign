@@ -10,7 +10,7 @@
         </ul>
         <div class="tags-close-box">
             <el-dropdown @command="handleTags">
-                <el-button size="mini" type="primary">
+                <el-button size="mini" type="info">
                     标签选项<i class="el-icon-arrow-down el-icon--right"></i>
                 </el-button>
                 <el-dropdown-menu size="small" slot="dropdown">
@@ -23,7 +23,7 @@
 </template>
 
 <script>
-    import bus from './bus';
+  import bus from './bus';
     export default {
         data() {
             return {
@@ -41,13 +41,13 @@
                 if (item) {
                     delItem.path === this.$route.fullPath && this.$router.push(item.path);
                 }else{
-                    this.$router.push('/');
+                    this.$router.push('/home');
                 }
             },
             // 关闭全部标签
             closeAll(){
                 this.tagsList = [];
-                this.$router.push('/');
+                this.$router.push('/home');
             },
             // 关闭其他标签
             closeOther(){
@@ -99,7 +99,7 @@
                         }else if(i > 0){
                             this.$router.push(this.tagsList[i-1].path);
                         }else{
-                            this.$router.push('/');
+                            this.$router.push('/home');
                         }
                         this.tagsList.splice(i, 1);
                         break;
@@ -153,6 +153,8 @@
 
     .tags-li.active {
         color: #fff;
+        background-color:#909399;
+        border:none;
     }
 
     .tags-li-title {

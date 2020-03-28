@@ -58,10 +58,12 @@ export default {
                            if(response.data.code===0){
                                 vm.$message.success('登录成功');
                                 let userName = response.data.data.userName,
-                                    userId = response.data.data.userId;
+                                    userId = response.data.data.userId,
+                                    userRank = response.data.data.userRank;
                                 sessionStorage.setItem('userName',userName);
                                 sessionStorage.setItem('userId',userId);
-                                vm.$router.push('/index').catch(err => { console.log(err) });
+                                sessionStorage.setItem('userRank',userRank);
+                                vm.$router.replace('/index').catch(err => { console.log(err) });
                             }else if(response.data.code===1){
                                vm.$message.warning("登录名密码错误！");
                             }else{

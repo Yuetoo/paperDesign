@@ -10,6 +10,7 @@ var logger = require('morgan');
 var userRouter = require('./routes/userAdmin');
 var questionRouter = require('./routes/questionAdmin');
 var paperRouter = require('./routes/paperAdmin');
+var bulletinRouter = require('./routes/bulletinAdmin');
 
 var url = 'http://localhost:8080';
 
@@ -57,6 +58,7 @@ app.get('/public/*', function (req, res) {
 app.use('/user',userRouter);
 app.use('/question',questionRouter);
 app.use('/paper',paperRouter);
+app.use('/bulletin',bulletinRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -45,6 +45,12 @@
                     </el-menu-item>
                 </template>
             </template>
+            <template v-if="userRank == 1">
+                <el-menu-item :index="userAdmin.index" >
+                    <i :class="userAdmin.icon"></i>
+                    <span slot="title">{{ userAdmin.title }}</span>
+                </el-menu-item>
+            </template>
         </el-menu>
     </div>
 </template>
@@ -58,7 +64,7 @@ export default {
             items: [
                 {
                     icon: 'el-icon-lx-home',
-                    index: 'dashboard',
+                    index: 'home',
                     title: '首页'
                 },
                  {
@@ -70,23 +76,10 @@ export default {
                             index: 'inputForm',
                             title: '手工方式'
                         },
-                        {
-                            index: '3-2',
-                            title: '批量方式',
-                            subs: [
-                                {
-                                    index: 'editor',
-                                    title: '富文本编辑器'
-                                },
-                                {
-                                    index: 'markdown',
-                                    title: 'markdown编辑器'
-                                }
-                            ]
-                        },
+                    
                         {
                             index: 'upload',
-                            title: '文件上传'
+                            title: '批量方式'
                         }
                     ]
                 },
@@ -125,19 +118,21 @@ export default {
                 },
                 {
                     icon: 'el-icon-lx-copy',
-                    index: 'tabs',
-                    title: 'tab选项卡'
-                },
-               
-                {
-                    icon: 'el-icon-lx-emoji',
-                    index: 'icon',
-                    title: '自定义图标'
+                    index: 'bulletin',
+                    title: '通知公告'
                 }
                
-            ]
+               
+            ],
+            userAdmin: {
+                    icon: 'el-icon-lx-group',
+                    index: 'userAdmin',
+                    title: '用户管理'
+                },
+            userRank:-1,
         };
     },
+
     computed: {
         onRoutes() {
             return this.$route.path.replace('/', '');
@@ -145,10 +140,8 @@ export default {
     },
     created() {
         // 通过 Event Bus 进行组件间通信，来折叠侧边栏
-        bus.$on('collapse', msg => {
-            this.collapse = msg;
-            bus.$emit('collapse-content', msg);
-        });
+       
+       this.userRank = sessionStorage.getItem('userRank');
     }
 };
 </script>
