@@ -400,6 +400,7 @@ export default {
         // 保存更新
         saveUpdate() {
             this.updateVisible = false;
+            // 难度系数 = 1 - （平均分/分值）
             this.updateForm.difficulty = (1 - (this.updateForm.gpa/this.updateForm.score)).toFixed(2);
             console.log('平均分：',this.updateForm.gpa);
             console.log('难度系数：',this.updateForm.difficulty);

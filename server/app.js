@@ -11,6 +11,7 @@ var userRouter = require('./routes/userAdmin');
 var questionRouter = require('./routes/questionAdmin');
 var paperRouter = require('./routes/paperAdmin');
 var bulletinRouter = require('./routes/bulletinAdmin');
+var autoCreate = require('./routes/algorithm');
 
 var url = 'http://localhost:8080';
 
@@ -59,6 +60,7 @@ app.use('/user',userRouter);
 app.use('/question',questionRouter);
 app.use('/paper',paperRouter);
 app.use('/bulletin',bulletinRouter);
+app.use('/autoCreate',autoCreate);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

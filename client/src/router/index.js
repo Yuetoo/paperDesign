@@ -54,9 +54,9 @@ export default new Router({
                 },
                 {
                     // 富文本编辑器组件
-                    path: '/editor',
-                    component: () => import(/* webpackChunkName: "editor" */ '../components/page/VueEditor.vue'),
-                    meta: { title: '富文本编辑器' }
+                    path: '/autoCreate',
+                    component: () => import(/* webpackChunkName: "editor" */ '../components/page/autoCreate.vue'),
+                    meta: { title: '智能组卷' }
                 },
                 {
                     // markdown组件

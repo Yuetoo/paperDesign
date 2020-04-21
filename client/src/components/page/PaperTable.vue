@@ -150,7 +150,7 @@
                         <div>总分值：</div>
                         <el-progress :percentage="totalScore" :color="scoreColor"></el-progress>
                         <div>难度系数：</div>
-                        <el-progress :percentage="difficulty" :color="difficultyColor"></el-progress>
+                        <el-progress :percentage="difficulty*100" :color="difficultyColor"></el-progress>
                     </el-col>
                     <el-col style="text-align:center;margin-right:4%;" :span="4">
                         <el-progress :width="90" type="circle" color="#7B68EE" :percentage="course1Score"></el-progress>
@@ -435,9 +435,12 @@ export default {
             this.difficulty = 0;
             for(let i=0;i<this.resultData.length;i++){
                 this.totalScore = this.totalScore + this.resultData[i].score;
+                this.difficulty = this.difficulty + this.resultData[i].difficulty * this.resultData[i].score;
                 this.course1Score = this.addupScore(1);
                 this.course2Score = this.addupScore(2);
             }
+            this.difficulty = parseFloat((this.difficulty / this.totalScore).toFixed(2));
+            console.log(this.difficulty);
         },
 
         addupScore(courseGoal){

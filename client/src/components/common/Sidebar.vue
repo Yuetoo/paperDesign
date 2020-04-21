@@ -95,6 +95,10 @@ export default {
                     subs:[{
                         index:'manualCreate',
                         title:'手动组卷'
+                    },
+                    {
+                        index:'autoCreate',
+                        title:'智能组卷'
                     }]
                 },
                 {
