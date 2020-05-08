@@ -21,11 +21,7 @@ export default new Router({
                     component: () => import(/* webpackChunkName: "dashboard" */ '../components/page/Index.vue'),
                     meta: { title: '系统首页' }
                 },
-                {
-                    path: '/icon',
-                    component: () => import(/* webpackChunkName: "icon" */ '../components/page/Icon.vue'),
-                    meta: { title: '自定义图标' }
-                },
+                
                 {
                     path: '/questionTable',
                     component: () => import(/* webpackChunkName: "table" */ '../components/page/QuestionTable.vue'),
@@ -58,17 +54,12 @@ export default new Router({
                     component: () => import(/* webpackChunkName: "editor" */ '../components/page/autoCreate.vue'),
                     meta: { title: '智能组卷' }
                 },
-                {
-                    // markdown组件
-                    path: '/markdown',
-                    component: () => import(/* webpackChunkName: "markdown" */ '../components/page/Markdown.vue'),
-                    meta: { title: 'markdown编辑器' }
-                },
+               
                 {
                     // 图片上传组件
                     path: '/upload',
                     component: () => import(/* webpackChunkName: "upload" */ '../components/page/Upload.vue'),
-                    meta: { title: '文件上传' }
+                    meta: { title: '批量导入' }
                 },
                 {
                     // vue-schart组件

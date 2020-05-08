@@ -66,7 +66,7 @@
 <script>
     import axios from 'axios';
     export default {
-        name: 'tabs',
+        
         data() {
             return {
                 message: 'first',

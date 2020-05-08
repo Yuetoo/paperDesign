@@ -2,7 +2,9 @@ var express = require('express');           //使用express
 var router = express.Router();               //放数据
 var multer = require('multer');
 var fs = require('fs');
+var Sequelize = require('sequelize');
 
+const Op = Sequelize.Op;
 
 const url = 'http://localhost:3000/';
 
@@ -79,12 +81,47 @@ router.get('/search', function (req, res, next) {
             where:query  
         }).then(result =>{
             res.json({
+                code:0,
+                msg:'查询成功！',
                 data:result
             })
         },err =>{
             console.log(err);
+            res.json({
+                code:1,
+                msg:'查询失败！'
+            })
         }); 
 });
+
+//关键词查询
+router.get('/blurSearch',function(req,res,next){
+    
+    let key = req.query.key;
+   // key = '%'+ key +'%';
+    console.log(key);
+    question.findAll({
+        where: {
+            content: {
+                [Op.like]: '%' + key + '%',
+            }
+        },
+    }).then(result =>{
+        console.log(result);
+        res.json({
+            code:0,
+            msg:'查询成功！',
+            data:result
+        })
+    },err =>{
+        console.log(err);
+        res.json({
+            code:1,
+            msg:"查询失败！"
+        })
+    });
+});
+
 //更新难度系数
 router.post("/updateDifficulty",function(req,res,next){
     let questionId = parseInt(req.body.questionId),

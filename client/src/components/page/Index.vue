@@ -83,7 +83,7 @@
 import axios from 'axios';
 
 export default {
-    name: 'dashboard',
+    
     data() {
         return {
             name: sessionStorage.getItem('userName'),

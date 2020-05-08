@@ -4,19 +4,27 @@ var papers = require('../models/paper');
 var questions = require('../models/question');
 
 router.get("/create",async function(req,res,next){
-    let ep = 0.4,COURSE1 = 53,COURSE2 = 47,size = 20,init = true,mutationRate = 0.004;//变异概率在 0.001~0.1 之间最佳
-    let selectNum = 0,blankNum = 3,QANum = 3,testifyNum = 1,analysisNum = 3,computeNum = 2,programNum = 1;
-    let FITNESS = 1.9,COUNT = 20,count = 0;
+    let param = req.query;
+    //试卷相关参数
+    let ep = parseFloat(param.difficulty),
+        COURSE1 = parseInt(param.course1),
+        COURSE2 = parseInt(param.course2),
+        selectNum = parseInt(param.select),
+        blankNum = parseInt(param.blank),
+        QANum = parseInt(param.QA),
+        testifyNum = parseInt(param.testify),
+        analysisNum = parseInt(param.analysis),
+        computeNum = parseInt(param.compute),
+        programNum = parseInt(param.program);  
+        //算法相关参数
+    let FITNESS = 1.9, COUNT = 40,count = 0,size = 50,init = true,mutationRate = 0.004; //变异概率在 0.001~0.1 之间最佳;
     //初始化种群
     let population = await initialise(size,init,ep,COURSE1,COURSE2,selectNum,blankNum,QANum,testifyNum,analysisNum,computeNum,programNum);
-   // console.log("init population",population);
     while(population.fittest.fitness < FITNESS && count != COUNT){
         //选择
-        let selection = await select(population,18);
-        //console.log("selection",selection);
+        let selection = await select(population,48);
         //交叉
-        population = await cross(selection,20,ep,COURSE1,COURSE2);
-        //console.log("corssResult:",population);
+        population = await cross(selection,50,ep,COURSE1,COURSE2);
         if(population.fittest.fitness < FITNESS && count != COUNT){
             //变异
             for(let i = 0;i<population.test.length;i++){
@@ -31,15 +39,13 @@ router.get("/create",async function(req,res,next){
                     population.test[i].course2);
                 if(i == population.test.length - 1){
                     population.getFittest();
-                    console.log("result:",population.fittest);
                 }
             }
+            count++;
         }
-        else{
-            
-        }
-        count++;
     }   
+    console.log("result:",population.fittest);
+    res.json(population.fittest);
 });
 
 //试卷
@@ -51,6 +57,7 @@ function Paper(){
     this.course1;
     this.course2;
 }
+
 Paper.prototype = {
     constructor:Paper,
     initData:function(){
@@ -204,11 +211,11 @@ function select(population,count){
         }
         while(times!=count){
             let random = Math.random()*totalAdaptation,degree = 0;
-            console.log("random:",random);
-            console.log("population.test.length",population.test.length);
+           // console.log("random:",random);
+           // console.log("population.test.length",population.test.length);
             for(let j = 0;j<population.test.length;j++){
                 degree += population.test[j].fitness;
-                console.log("degree",degree);
+               // console.log("degree",degree);
                 if(degree >= random){
                     //查重
                     if(!selected[j]){
@@ -241,7 +248,7 @@ function cross(population,newNum,ep,COURSE1,COURSE2){
                 paperTwo.genes = [].concat(population.test[indexTwo].genes);
                // console.log("paperOne:",paperOne);
                 let random = Math.round(Math.random()*(paperOne.genes.length -2));
-                console.log("random",random);
+               // console.log("random",random);
                 for(let i = random;i<random + 2;i++){
                     let temp1 = JSON.parse(JSON.stringify(paperOne.genes[i]));
                     let temp2 = JSON.parse(JSON.stringify(paperTwo.genes[i]));

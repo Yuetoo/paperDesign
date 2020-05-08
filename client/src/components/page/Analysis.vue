@@ -27,6 +27,15 @@
                                 @click="handleEdit(scope.$index, scope.row)">查看统计分析</el-button>
                     </template>
                 </el-table-column>
+                 <el-table-column label="" width="140" align="center">
+                    <template slot-scope="scope">
+                        <el-button
+                            
+                            icon="el-icon-view"
+                            @click="preExport(scope.row)"
+                        >导出预览</el-button>
+                    </template>
+                </el-table-column>
             </el-table>
             <div class="pagination">
                  <el-pagination
@@ -43,50 +52,27 @@
 
        
         <!-- 试卷数据录入 -->
-        <el-dialog title="录入统计" :visible.sync="inputVisible" width="50%">
-            <el-form label-position="right" label-width="80px" :model="inputForm">
-                <el-form-item label="第一年">
-                    <el-col :span='4' style="margin-right:20px;margin-left:20px;">
-                        <el-input oninput="value=value.replace(/[^\d.]/g,'')" :disabled="Boolean(preData.max1)" type="number" v-model="inputForm.max1" placeholder="最高分"></el-input>
-                    </el-col>
-                    <el-col :span='4' style="margin-right:20px;">
-                        <el-input oninput="value=value.replace(/[^\d.]/g,'')" :disabled="(preData.min1!=null)" type="number" v-model="inputForm.min1" placeholder="最低分"></el-input>
-                    </el-col>
-                    <el-col :span='4' style="margin-right:20px;">
-                        <el-input oninput="value=value.replace(/[^\d.]/g,'')" :disabled="Boolean(preData.gpa1)" type="number" v-model="inputForm.gpa1" placeholder="评均分"></el-input>
-                    </el-col>
-                    <el-col :span='4'>
-                        <el-input oninput="value=value.replace(/[^\d.]/g,'')" :disabled="Boolean(preData.sd1)" type="number" v-model="inputForm.sd1" placeholder="标准差"></el-input>
-                    </el-col>  
+        <el-dialog title="录入统计" :visible.sync="inputVisible" width="40%">
+            <el-form label-position="right" label-width="100px" :model="inputForm">
+                <el-form-item label="课号：" required>
+                    <el-input style="width:80%;" v-model="inputForm.classNum" ></el-input> 
                 </el-form-item>
-                <el-form-item label="第二年">
-                    <el-col :span='4' style="margin-right:20px;margin-left:20px;">
-                        <el-input oninput="value=value.replace(/[^\d.]/g,'')" :disabled="Boolean(preData.max2)" type="number" v-model="inputForm.max2" placeholder="最高分"></el-input>
-                    </el-col>
-                    <el-col :span='4' style="margin-right:20px;">
-                        <el-input oninput="value=value.replace(/[^\d.]/g,'')" :disabled="(preData.min2!=null)" type="number" v-model="inputForm.min2" placeholder="最低分"></el-input>
-                    </el-col>
-                    <el-col :span='4' style="margin-right:20px;">
-                        <el-input oninput="value=value.replace(/[^\d.]/g,'')" :disabled="Boolean(preData.gpa2)" type="number" v-model="inputForm.gpa2" placeholder="评均分"></el-input>
-                    </el-col>
-                    <el-col :span='4'>
-                        <el-input oninput="value=value.replace(/[^\d.]/g,'')" :disabled="Boolean(preData.sd2)" type="number" v-model="inputForm.sd2" placeholder="标准差"></el-input>
-                    </el-col>
+                <el-form-item label="考试日期：" required>
+                    <el-date-picker type="date" value-format="yyyy-MM-dd" placeholder="选择日期" v-model="inputForm.date"></el-date-picker>
                 </el-form-item>
-                <el-form-item label="第三年">
-                    <el-col :span='4' style="margin-right:20px;margin-left:20px;">
-                        <el-input oninput="value=value.replace(/[^\d.]/g,'')" :disabled="Boolean(preData.max3)" type="number" v-model="inputForm.max3" placeholder="最高分"></el-input>
-                    </el-col>
-                    <el-col :span='4' style="margin-right:20px;">
-                        <el-input oninput="value=value.replace(/[^\d.]/g,'')" :disabled="(preData.min3!=null)" type="number" v-model="inputForm.min3" placeholder="最低分"></el-input>
-                    </el-col>
-                    <el-col :span='4' style="margin-right:20px;">
-                        <el-input oninput="value=value.replace(/[^\d.]/g,'')" :disabled="Boolean(preData.gpa3)" type="number" v-model="inputForm.gpa3" placeholder="评均分"></el-input>
-                    </el-col>
-                    <el-col :span='4'>
-                        <el-input oninput="value=value.replace(/[^\d.]/g,'')" :disabled="Boolean(preData.sd3)" type="number" v-model="inputForm.sd3" placeholder="标准差"></el-input>
-                    </el-col>
+                <el-form-item label="最高分：">
+                    <el-input style="width:80%;" oninput="value=value.replace(/[^\d.]/g,'')"  v-model="inputForm.max"></el-input> 
                 </el-form-item>
+                <el-form-item label="最低分：">
+                    <el-input style="width:80%;" oninput="value=value.replace(/[^\d.]/g,'')"  v-model="inputForm.min"></el-input> 
+                </el-form-item>
+                <el-form-item label="平均分：">
+                    <el-input style="width:80%;" oninput="value=value.replace(/[^\d.]/g,'')"  v-model="inputForm.gpa"></el-input> 
+                </el-form-item>
+                <el-form-item label="标准差：">
+                    <el-input style="width:80%;" oninput="value=value.replace(/[^\d.]/g,'')"  v-model="inputForm.sd"></el-input> 
+                </el-form-item>
+             
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="cancel">取消</el-button>
@@ -96,20 +82,22 @@
         <!-- 查看数据 -->
         <el-dialog title="试卷分析" :visible.sync="editVisible" width='70%'>
           
-                <el-row style="margin-bottom:4%;">
-                    <el-col :span="7" style="margin-left:10%;margin-right:4%;">
-                        <div>难度系数：</div>
-                        <el-progress :percentage="difficulty" :color="difficultyColor"></el-progress>
-                    </el-col>
-                    <el-col style="text-align:center;" :span="6">
-                        <el-progress :width="80" type="circle" color="#7B68EE" :percentage="course1Score"></el-progress>
-                        <div>课程目标1占分值</div>
-                    </el-col>
-                    <el-col style="text-align:center" :span="6">
-                        <el-progress type="circle" :width='80' color="#F08080" :percentage="course2Score" ></el-progress>
-                        <div>课程目标2占分值</div>
-                    </el-col>  
-                </el-row>
+                <el-row style="padding-left:8%;margin-bottom:30px;padding-bottom:20px;">
+                <el-col :span="8" style="margin-right:5%;">
+                
+                    <div>难度系数：</div>
+                    <el-progress :percentage="parseInt(difficulty*100)" :color="difficultyColor"></el-progress>
+                </el-col>
+                <el-col style="text-align:center;margin-right:4%;" :span="5">
+                    <el-progress :width="90" type="circle" color="#7B68EE" :percentage="course1Score"></el-progress>
+                    <div>课程目标1占分值</div>
+                </el-col>
+                <el-col style="text-align:center" :span="5">
+                    <el-progress type="circle" :width='90' color="#F08080" :percentage="course2Score" ></el-progress>
+                    <div>课程目标2占分值</div>
+                </el-col>  
+                      
+            </el-row>
             <el-tabs v-model="activeName" type="card">
                 <el-tab-pane label="得分统计" name="first">
                      <div class="schart-box">
@@ -120,7 +108,7 @@
                 <el-tab-pane label="趋势对比" name="second">
                     <div class="schart-box">
                         
-                        <schart v-if="activeName==='second'" class="schart" canvasId="line" :options="options2"></schart>
+                        <schart v-if="activeName==='second'" class="schart" canvasId="line1" :options="options2"></schart>
                     </div>
                 </el-tab-pane>
                 
@@ -139,19 +127,62 @@
                 <el-tab-pane label="试卷标准差" name="fifth">
                     <div class="schart-box">
                         
-                        <schart v-if="activeName==='fifth'" class="schart" canvasId="line" :options="options5"></schart>
+                        <schart v-if="activeName==='fifth'" class="schart" canvasId="line2" :options="options5"></schart>
                     </div>
                 </el-tab-pane>
             </el-tabs>
         </el-dialog>
+        <!-- 数据导出模板 -->
+        <el-dialog :visible.sync="exportPre" width="70%">
+            <div id="data" style="width:100%;padding-top:60px;padding-left:10px;padding-right:10px;">
+                <div style="text-align:center">
+                   <h2>{{paper.paperHeader}}</h2>
+               </div>
+             <el-row style="margin-top:8%;padding-left:10%;">
+                    <el-col :span="5" style="margin-left:7%;">
+                        <div>难度系数：</div>
+                        <el-progress :percentage="parseInt(difficulty*100)" :color="difficultyColor"></el-progress>
+                    </el-col>
+                    <el-col style="margin-left:7%;" :span="5">
+                         <div>课程目标1分值：</div>
+                        <el-progress :percentage="course1Score" color="#7B68EE"></el-progress>
+                    </el-col>
+                    <el-col style="margin-left:7%;" :span="5">
+                         <div>课程目标2分值：</div>
+                        <el-progress :percentage="course2Score" color="#F08080"></el-progress>
+                    </el-col>  
+                </el-row>
+                <div style="text-align:center;margin-top:8%;">
+                     <div class="schart-box">
+                        <schart class="schart" canvasId="score" :options="options1"></schart>
+                    </div>
+                    <div class="schart-box">
+                        <schart class="schart" canvasId="years" :options="options2"></schart>
+                    </div>
+                     <div class="schart-box" style="margin-top:300px;">
+                        <schart class="schart" canvasId="konwledge" :options="options3"></schart>
+                    </div>
+                    <div class="schart-box" style="margin-top:100px;"> 
+                        <schart class="schart" canvasId="courseGoal" :options="options4"></schart>
+                    </div>
+                    <div class="schart-box" style="margin-top:350px;">
+                        <schart class="schart" canvasId="sd" :options="options5"></schart>
+                    </div>
+                </div>
+            </div>
+            
+                <el-button type="primary" @click="exportPdf(paper.paperHeader)" style="margin-left:85%;">导出数据</el-button>
+        </el-dialog>
+        
     </div>
 </template>
 
 
 <script>
-import { fetchData } from '../../api/index';
+
 import axios from 'axios';
 import Schart from 'vue-schart';
+import htmlToPdf from '../../utils/htmlToPdf';
 export default {
      name: 'basecharts',
         components: {
@@ -159,48 +190,49 @@ export default {
         },
     data() {
         return {
+            exportPre:false,
             options1: {
                 type: 'bar',
                 title: {
-                    text: '最近三年考试得分情况'
+                    text: '各课号考试得分情况'
                 },
                 bgColor: '#fbfbfb',
-                labels: ['第一年', '第二年', '第三年'],
+                labels: ['', '', '', '', ''],
                 datasets: [
                     {
                         label: '最低分',
                         fillColor: 'rgba(241, 49, 74, 0.5)',
-                        data: [0,0,0]
+                        data: [0,0,0,0,0]
                     },
                     {
                         label: '最高分',
-                        data: [0,0,0]
+                        data: [0,0,0,0,0]
                     },
                     {
                         label: '平均分',
-                        data: [0,0,0]
+                        data: [0,0,0,0,0]
                     }
                 ]
             },
             options2: {
                 type: 'line',
                 title: {
-                    text: '最近三年考试趋势'
+                    text: '最近几次的考试趋势'
                 },
                 bgColor: '#fbfbfb',
-                labels: ['第一年', '第二年', '第三年'],
+                labels: ['', '', '','',''],
                 datasets: [
                     {
                         label: '最低分',
-                        data: [0,0,0]
+                        data: [0,0,0,0,0]
                     },
                     {
                         label: '最高分',
-                        data: [0,0,0]
+                        data: [0,0,0,0,0]
                     },
                     {
                         label: '平均分',
-                        data: [0,0,0]
+                        data: [0,0,0,0,0]
                     }
                 ]
             },
@@ -243,14 +275,14 @@ export default {
             options5: {
                 type: 'line',
                 title: {
-                    text: '最近三年考试标准差'
+                    text: '最近几次考试标准差'
                 },
                 bgColor: '#fbfbfb',
-                labels: ['第一年', '第二年', '第三年'],
+                labels: ['', '', '', '', ''],
                 datasets: [
                     {
                         label: '标准差',
-                        data: [0, 0, 0]
+                        data: [0, 0, 0,0,0]
                     }
                   
                 ]
@@ -263,7 +295,7 @@ export default {
           
             inputVisible:false,
             inputForm:{},
-            preData:{},
+           
            
             ediForm: {},
             idx: -1,
@@ -278,8 +310,8 @@ export default {
             course2Score:0,
         
             editVisible: false,
-            paper:{},
-            analysis:{}
+            paper:{}
+           
         };
     },
     created() {
@@ -304,12 +336,20 @@ export default {
         cancel(){
             this.inputVisible = false;
             this.inputForm = {};
-            this.preData = {};
+            
+        },
+
+        reset(){
+            this.options1.labels = this.options2.labels = this.options5.labels = ['','','','',''];
+            this.options1.datasets[0].data = this.options1.datasets[1].data = this.options1.datasets[2].data
+            = this.options2.datasets[0].data = this.options2.datasets[1].data = this.options2.datasets[2].data
+            = this.options5.datasets[0].data = [0,0,0,0,0];
         },
 
         //查看数据统计
         handleEdit(index, row) {
             console.log(row);
+            this.reset();
             this.paper = row;
             this.editVisible = true;
            
@@ -322,22 +362,31 @@ export default {
                 }
             })
             .then(res =>{
-                this.analysis = res.data;
-                console.log(this.analysis);
-                this.initData();
-            });
-                         
+                if(res.data){
+                    let analysis = res.data;
+                    console.log(analysis);
+                    this.initData(analysis);
+                }
+            });            
         },
         
-        initData(){
-            let max = [this.analysis.max1,this.analysis.max2,this.analysis.max3],
-                min = [this.analysis.min1,this.analysis.min2,this.analysis.min3],
-                gpa = [this.analysis.gpa1,this.analysis.gpa2,this.analysis.gpa3],
-                sd = [this.analysis.sd1,this.analysis.sd2,this.analysis.sd3],
-                course = [this.course1Score,this.course2Score];
+        initData(analysis){
+            let max = [analysis.max1,analysis.max2,analysis.max3,analysis.max4,analysis.max5],
+                min = [analysis.min1,analysis.min2,analysis.min3,analysis.min4,analysis.min5],
+                gpa = [analysis.gpa1,analysis.gpa2,analysis.gpa3,analysis.gpa4,analysis.gpa5],
+                sd = [analysis.sd1,analysis.sd2,analysis.sd3,analysis.sd4,analysis.sd5],
+                course = [this.course1Score,this.course2Score],
+                classNum = [analysis.classNum1,
+                         analysis.classNum2,
+                         analysis.classNum3,
+                         analysis.classNum4,
+                         analysis.classNum5],
+                date = [analysis.date1,analysis.date2,analysis.date3,analysis.date4,analysis.date5];
             this.options1.datasets[0].data = this.options2.datasets[0].data = min;
             this.options1.datasets[1].data = this.options2.datasets[1].data = max;
             this.options1.datasets[2].data = this.options2.datasets[2].data = gpa;
+            this.options1.labels = classNum;
+            this.options2.labels = this.options5.labels = date;
             this.options4.datasets[0].data = course;
             this.options5.datasets[0].data = sd;
             axios.get(this.GLOBAL.url+"paper/countPoint",{
@@ -348,14 +397,14 @@ export default {
                 console.log(res.data);
                 this.options3.datasets[0].data = res.data;
             });
-
         },
 
 
         
-
+        //提交分析数据
         save(){
             let inputForm = this.inputForm;
+            console.log(inputForm);
             this.$confirm('提交后无法修改, 是否继续?', '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
@@ -364,10 +413,20 @@ export default {
                         axios.post(this.GLOBAL.url+'paper/addAnalysis',inputForm)
                         .then(res =>{
                             console.log(res);
-                            this.$message({
-                                type: 'success',
-                                message: '提交成功!'
-                            });  
+                            if(res.data.code === 0){
+                                 this.$message({
+                                    type: 'success',
+                                    message: '添加成功!'
+                                });
+                            }
+                            else{
+                                 this.$message({
+                                    type: 'error',
+                                    message: res.data.msg
+                                });
+                            }
+                             
+                            this.inputVisible = false;
                         });
                     }).catch(() => {
                         this.$message({
@@ -375,30 +434,17 @@ export default {
                             message: '已取消提交！'
                         });          
                     });
-            this.inputVisible = false;
+            
             this.inputForm = {};
-            this.preData = {};
-
+           
         },
         
          // 录入数据
         handleInput(index, row) {
             this.inputVisible = true;
             let paperId = row.paperId;
+            this.inputForm = {};
             this.inputForm.paperId = paperId;
-            axios.get(this.GLOBAL.url+"paper/analysisData",{
-                params:{
-                    'paperId':paperId
-                }
-            }).then(res =>{
-                console.log(res);
-                if(res.data){
-                    this.inputForm = res.data;
-                    Object.keys(this.inputForm).forEach(key =>{
-                        this.preData[key] = res.data[key]
-                    });
-                }
-            })
         },
        
         // 分页导航
@@ -410,13 +456,41 @@ export default {
         handleCurrentChange: function(currentPage){
                 this.currentPage = currentPage;
                 console.log(this.currentPage)  //点击第几页
+        },
+        //数据导出
+        preExport:function(row){
+            this.reset();
+            this.paper = row;
+            this.exportPre = true;
+            this.difficulty = row.difficulty;
+            this.course1Score = row.course1Score;
+            this.course2Score = row.course2Score;  
+            axios.get(this.GLOBAL.url+'paper/analysisData',{
+                params:{
+                    paperId:row.paperId
+                }
+            })
+            .then(res =>{
+                if(res.data){
+                    let analysis = res.data;
+                    console.log(analysis);
+                    this.initData(analysis);
+                }
+                
+            });           
+           
+        },
+        exportPdf(pdfName){
+            htmlToPdf.downloadPDF( document.querySelector('#data'),pdfName);
         }
-
     },
 };
 </script>
 
 <style scoped>
+*{
+    box-sizing: border-box;
+}
 .el-tab-pane{
     text-align: center;
    

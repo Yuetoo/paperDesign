@@ -24,10 +24,16 @@
                    
                 </el-table-column>
                 <el-table-column prop="difficulty" sortable label="难度系数" width='100'></el-table-column>
-                <el-table-column prop="course1Score" label="课程目标1分值" width='150'></el-table-column>
-                <el-table-column prop="course2Score" label="课程目标2分值" width='150'></el-table-column>
-                <el-table-column label="操作" width="200" align="center">
+                <el-table-column prop="course1Score" sortable label="课程目标1分值" width='90'></el-table-column>
+                <el-table-column prop="course2Score" sortable label="课程目标2分值" width='90'></el-table-column>
+                <el-table-column label="操作" width="260" align="center">
                     <template slot-scope="scope">
+                         <el-button
+                            type="text"
+                            icon="el-icon-view"
+                            style="color:#67C23A"
+                            @click="handlePreview(scope.$index, scope.row)"
+                        >预览</el-button>
                         <el-button
                             type="text"
                             icon="el-icon-edit"
@@ -60,7 +66,119 @@
                     </el-pagination>
             </div>
         </div>
+        <!--试卷预览-->
+        <el-dialog :visible.sync="previewVisible" width="60%" ref="ele">
+             <el-row style="padding-left:8%;margin-bottom:30px;border-bottom:1px dotted #C0C4CC;padding-bottom:20px;">
+                <el-col :span="8" style="margin-right:5%;">
+                    <div>总分值：</div>
+                    <el-progress :percentage="totalScore" :color="scoreColor"></el-progress>
+                    <div>难度系数：</div>
+                    <el-progress :percentage="parseInt(difficulty*100)" :color="difficultyColor"></el-progress>
+                </el-col>
+                <el-col style="text-align:center;margin-right:4%;" :span="5">
+                    <el-progress :width="90" type="circle" color="#7B68EE" :percentage="course1Score"></el-progress>
+                    <div>课程目标1占分值</div>
+                </el-col>
+                <el-col style="text-align:center" :span="5">
+                    <el-progress type="circle" :width='90' color="#F08080" :percentage="course2Score" ></el-progress>
+                    <div>课程目标2占分值</div>
+                </el-col>  
+                <el-col :span="3">
+                    <el-button type="primary" style="width:70%;float:right;margin-top:40%;" @click="exportPdf(previewItem.paperHeader)">导出</el-button>
+                </el-col>       
+            </el-row>
+            
+           <div style="width:100%;padding:50px 80px;" id="demo" >
+               <div style="text-align:center">
+                   <h2>{{previewItem.paperHeader}}</h2>
+                    <p style="margin-top:30px;margin-bottom:20px;">班级：_________&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;学号：_________&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;姓名：_________</p>
+               </div>
+               <ol style="list-style-type:upper-roman;">
+                   <li v-if="sort.select.length">
+                       <h3 style="margin-bottom:20px;">选择题</h3>
+                        <ol style="font-size:15px;line-height:25px;">
+                            <li v-for="item in sort.select" :key="item.questionId">
+                                
+                                    <p>{{item.content}}</p>
+                                    <div style="width:100%;text-align:center;padding-top:20px;">
+                                        <el-image v-if="item.qPicture" :src="item.qPicture" style="width:30%;"></el-image>
+                                    </div>
+                            </li>
+                        </ol>
+                   </li>
 
+                   <li v-if="sort.blank.length">
+                       <h3 style="margin-bottom:20px;">填空题</h3>
+                        <ol style="font-size:15px;line-height:25px;">
+                            <li v-for="item in sort.blank" :key="item.questionId">
+                               
+                                    <p>{{item.content}}</p>
+                                    <div style="width:100%;text-align:center;padding-top:20px;">
+                                        <el-image v-if="item.qPicture" :src="item.qPicture" style="width:30%;"></el-image>
+                                    </div>
+                            </li>
+                        </ol>
+                   </li>
+                   <li v-if="sort.QA.length">
+                        <h3 style="margin-bottom:20px;">简答题</h3>
+                        <ol style="font-size:15px;line-height:25px;">
+                            <li v-for="item in sort.QA" :key="item.questionId">
+                                    <p>{{item.content}}</p>
+                                    <div style="width:100%;text-align:center;padding-top:20px;">
+                                        <el-image v-if="item.qPicture" :src="item.qPicture" style="width:30%;"></el-image>
+                                    </div>
+                            </li>
+                        </ol>
+                   </li>
+                   <li v-if="sort.testify.length">
+                       <h3 style="margin-bottom:20px;">证明题</h3>
+                        <ol style="font-size:15px;line-height:25px;">
+                            <li v-for="item in sort.testify" :key="item.questionId">
+                                    <p>{{item.content}}</p>
+                                    <div style="width:100%;text-align:center;padding-top:20px;">
+                                        <el-image v-if="item.qPicture" :src="item.qPicture" style="width:30%;"></el-image>
+                                    </div>
+                            </li>
+                        </ol>
+                   </li>
+                   <li v-if="sort.analysis.length">
+                       <h3 style="margin-bottom:20px;">分析题</h3>
+                        <ol style="font-size:15px;line-height:25px;">
+                            <li v-for="item in sort.analysis" :key="item.questionId">
+                                    <p>{{item.content}}</p>
+                                     <div style="width:100%;text-align:center;padding-top:20px;">
+                                        <el-image v-if="item.qPicture" :src="item.qPicture" style="width:30%;"></el-image>
+                                    </div>
+                            </li>
+                        </ol>
+                   </li>
+                   <li v-if="sort.compute.length">
+                        <h3 style="margin-bottom:20px;">计算题</h3>
+                        <ol style="font-size:15px;line-height:25px;">
+                            <li v-for="item in sort.compute" :key="item.questionId">
+                                    <p>{{item.content}}</p>
+                                     <div style="width:100%;text-align:center;padding-top:20px;">
+                                        <el-image v-if="item.qPicture" :src="item.qPicture" style="width:30%;"></el-image>
+                                    </div>
+                            </li>
+                        </ol>
+                   </li>
+                   <li v-if="sort.program.length">
+                        <h3 style="margin-bottom:20px;">程序设计题</h3>
+                        <ol style="font-size:15px;line-height:25px;">
+                            <li v-for="item in sort.program" :key="item.questionId">
+                                    <p>{{item.content}}</p>
+                                    <div style="width:100%;text-align:center;padding-top:20px;">
+                                        <el-image v-if="item.qPicture" :src="item.qPicture" style="width:30%;"></el-image>
+                                    </div>
+                            </li>
+                        </ol>
+                   </li>
+               </ol>    
+           </div>
+        </el-dialog>
        
         <!-- 试卷重命名 -->
         <el-dialog title="试卷重命名" :visible.sync="updateVisible" width="30%">
@@ -150,7 +268,7 @@
                         <div>总分值：</div>
                         <el-progress :percentage="totalScore" :color="scoreColor"></el-progress>
                         <div>难度系数：</div>
-                        <el-progress :percentage="difficulty*100" :color="difficultyColor"></el-progress>
+                        <el-progress :percentage="parseInt(difficulty*100)" :color="difficultyColor"></el-progress>
                     </el-col>
                     <el-col style="text-align:center;margin-right:4%;" :span="4">
                         <el-progress :width="90" type="circle" color="#7B68EE" :percentage="course1Score"></el-progress>
@@ -163,7 +281,14 @@
                            
                 </el-row>
             
-                <div style="margin-bottom:20px;font-size:18px;">试卷题目列表</div>
+                <div style="margin-bottom:20px;font-size:18px;">试卷题目列表
+                     <el-button
+                            type="text"
+                            icon="el-icon-view"
+                            style="color:#67C23A;margin-left:20px;"
+                            @click="preview"
+                        >预览</el-button>
+                </div>
             
                     <el-table
                     :data="resultData"
@@ -205,12 +330,100 @@
                    
                     <el-button type="primary" @click="savePaper" style="margin-top:10px;margin-left:90%;">保存试卷</el-button>        
         </el-dialog>
+                        <!--试卷编辑中的预览-->
+        <el-dialog :visible.sync="editPreview" width="60%">
+           
+           <div style="width:100%;padding:50px 80px;"> 
+               <ol style="list-style-type:upper-roman;">
+                   <li v-if="sort.select.length">
+                       <h3 style="margin-bottom:20px;">选择题</h3>
+                        <ol style="font-size:15px;line-height:25px;">
+                            <li v-for="item in sort.select" :key="item.questionId">
+                                    <p>{{item.content}}</p>
+                                    <div style="width:100%;text-align:center;padding-top:20px;">
+                                        <el-image v-if="item.qPicture" :src="item.qPicture" style="width:30%;"></el-image>
+                                    </div>
+                            </li>
+                        </ol>
+                   </li>
+
+                   <li v-if="sort.blank.length">
+                       <h3 style="margin-bottom:20px;">填空题</h3>
+                        <ol style="font-size:15px;line-height:25px;">
+                            <li v-for="item in sort.blank" :key="item.questionId">
+                               
+                                    <p>{{item.content}}</p>
+                                    <div style="width:100%;text-align:center;padding-top:20px;">
+                                        <el-image v-if="item.qPicture" :src="item.qPicture" style="width:30%;"></el-image>
+                                    </div>
+                            </li>
+                        </ol>
+                   </li>
+                   <li v-if="sort.QA.length">
+                        <h3 style="margin-bottom:20px;">简答题</h3>
+                        <ol style="font-size:15px;line-height:25px;">
+                            <li v-for="item in sort.QA" :key="item.questionId">
+                                    <p>{{item.content}}</p>
+                                    <div style="width:100%;text-align:center;padding-top:20px;">
+                                        <el-image v-if="item.qPicture" :src="item.qPicture" style="width:30%;"></el-image>
+                                    </div>
+                            </li>
+                        </ol>
+                   </li>
+                   <li v-if="sort.testify.length">
+                       <h3 style="margin-bottom:20px;">证明题</h3>
+                        <ol style="font-size:15px;line-height:25px;">
+                            <li v-for="item in sort.testify" :key="item.questionId">
+                                    <p>{{item.content}}</p>
+                                    <div style="width:100%;text-align:center;padding-top:20px;">
+                                        <el-image v-if="item.qPicture" :src="item.qPicture" style="width:30%;"></el-image>
+                                    </div>
+                            </li>
+                        </ol>
+                   </li>
+                   <li v-if="sort.analysis.length">
+                       <h3 style="margin-bottom:20px;">分析题</h3>
+                        <ol style="font-size:15px;line-height:25px;">
+                            <li v-for="item in sort.analysis" :key="item.questionId">
+                                    <p>{{item.content}}</p>
+                                     <div style="width:100%;text-align:center;padding-top:20px;">
+                                        <el-image v-if="item.qPicture" :src="item.qPicture" style="width:30%;"></el-image>
+                                    </div>
+                            </li>
+                        </ol>
+                   </li>
+                   <li v-if="sort.compute.length">
+                        <h3 style="margin-bottom:20px;">计算题</h3>
+                        <ol style="font-size:15px;line-height:25px;">
+                            <li v-for="item in sort.compute" :key="item.questionId">
+                                    <p>{{item.content}}</p>
+                                     <div style="width:100%;text-align:center;padding-top:20px;">
+                                        <el-image v-if="item.qPicture" :src="item.qPicture" style="width:30%;"></el-image>
+                                    </div>
+                            </li>
+                        </ol>
+                   </li>
+                   <li v-if="sort.program.length">
+                        <h3 style="margin-bottom:20px;">程序设计题</h3>
+                        <ol style="font-size:15px;line-height:25px;">
+                            <li v-for="item in sort.program" :key="item.questionId">
+                                    <p>{{item.content}}</p>
+                                    <div style="width:100%;text-align:center;padding-top:20px;">
+                                        <el-image v-if="item.qPicture" :src="item.qPicture" style="width:30%;"></el-image>
+                                    </div>
+                            </li>
+                        </ol>
+                   </li>
+               </ol>    
+           </div>
+        </el-dialog>
     </div>
 </template>
 
 <script>
-import { fetchData } from '../../api/index';
-import axios from 'axios'
+
+import axios from 'axios';
+import htmlToPdf from '../../utils/htmlToPdf';
 export default {
     
     data() {
@@ -222,6 +435,10 @@ export default {
             delList: [],
             updateVisible:false,
             updateForm:{},
+
+            previewVisible:false,
+            previewItem:{},
+            editPreview:false,
            
             ediForm: {},
             idx: -1,
@@ -246,12 +463,22 @@ export default {
             course2Score:0,
             tableData:[],
             resultData:[],
+            sort:{
+                select:[],
+                blank:[],
+                QA:[],
+                testify:[],
+                analysis:[],
+                compute:[],
+                program:[]
+            },
             multipleSelection:[],
             editVisible: false,
         };
     },
     created() {
         this.getList();
+       
     },
     methods: {
         
@@ -290,9 +517,27 @@ export default {
            .then(res =>{
               console.log(res.data.data);
               this.resultData = res.data.data;
-              
+              this.sortType(this.resultData);
+              console.log(this.sort);
            })       
         },
+
+        handlePreview(index,row){
+            this.previewVisible = true;
+            this.difficulty = row.difficulty;
+            this.course1Score = row.course1Score;
+            this.course2Score = row.course2Score;
+            this.totalScore = this.course1Score + this.course2Score; 
+            this.previewItem = row;
+            this.getResultData(row); 
+        },
+
+        preview(){
+            this.editPreview = true;
+            this.sort = null;
+            this.sortType(this.resultData);
+        },
+    　　　　
         // 删除操作
         Delete(index, row) {
             // 二次确认删除
@@ -462,7 +707,7 @@ export default {
         savePaper(){
             let param = {};
             var attr = ['question1','question2','question3','question4','question5','question6','question7','question8','question9','question10','question11','question12','question13','question14','question15','question16','question17','question18','question19','question20'];
-            this.$confirm('确定保存修改吗', '提示', {
+            this.$confirm('确定保存修改吗?', '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消'
             }).then(() => {
@@ -534,12 +779,55 @@ export default {
                 console.log(this.currentPage)  //点击第几页
         },
 
+        //试题分类
+        sortType:function(arr){
+            this.sort ={
+                select:[],
+                blank:[],
+                QA:[],
+                testify:[],
+                analysis:[],
+                compute:[],
+                program:[]
+            };
+            for(let i = 0;i<arr.length;i++){
+                if(arr[i].questionType === '选择题'){
+                    this.sort.select.push(arr[i]);
+                }
+                if(arr[i].questionType === '填空题'){
+                    this.sort.blank.push(arr[i]);
+                }
+                if(arr[i].questionType === '简答题'){
+                    this.sort.QA.push(arr[i]);
+                }
+                if(arr[i].questionType === '证明题'){
+                    this.sort.testify.push(arr[i]);
+                }
+                if(arr[i].questionType === '分析题'){
+                    this.sort.analysis.push(arr[i]);
+                }
+                if(arr[i].questionType === '计算题'){
+                    this.sort.compute.push(arr[i]);
+                }
+                if(arr[i].questionType === '程序设计题'){
+                    this.sort.program.push(arr[i]);
+                }
+            }
+        },
+        //试卷导出
+        exportPdf:function(pdfName){
+           htmlToPdf.downloadPDF( document.querySelector('#demo'),pdfName);
+        }
 
     },
 };
 </script>
 
 <style scoped>
+*{
+    box-sizing: border-box;
+}
+
 .handle-box {
     margin-bottom: 20px;
 }

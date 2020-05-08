@@ -28,7 +28,7 @@
 </template>
 <script>
 import axios from 'axios';
-import { fetchData } from '../../api/index';
+
 export default {
     data(){
         return {

@@ -136,7 +136,7 @@
 </template>
 
 <script>
-import { fetchData } from '../../api/index';
+
 import axios from 'axios'
 export default {
     

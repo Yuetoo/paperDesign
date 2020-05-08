@@ -51,9 +51,10 @@
                         <el-input v-model="ediForm.content" placeholder="请在这里写下题目..."  type="textarea" :rows="10"></el-input>
                     </el-form-item> 
                     <el-form-item label="题目图片">
+                        <div style="margin-left:calc((50%-360px)/2);width:360px;height:178px;border:1px dotted #DCDFE6;">
                             <el-upload
+                            style="width:100%;height:100%;"
                             class="avatar-uploader"
-                            style="margin-left:calc((50%-360px)/2);"
                             action="aaa"
                             :show-file-list="false"
                             :on-change="handleChange"
@@ -62,14 +63,16 @@
                                 <img v-if="ediForm.qPicture" :src="ediForm.qPicture" class="avatar">
                                 <i v-else class="el-icon-plus avatar-uploader-icon" ></i>
                             </el-upload>
+                        </div>
                     </el-form-item>
                    <el-form-item label="答案" prop="answer">
                         <el-input v-model="ediForm.answer" placeholder="请在这里写下这道题的答案..."  type="textarea" :rows="10"></el-input>
                     </el-form-item> 
                     <el-form-item label="答案图片">
+                         <div style="margin-left:calc((50%-360px)/2);width:360px;height:178px;border:1px dotted #DCDFE6;">
                             <el-upload
                             class="avatar-uploader"
-                            style="margin-left:calc((50%-360px)/2);"
+                            style="width:100%;height:100%;"
                             action="aaa"
                             :show-file-list="false"
                             :on-change="hdChange"
@@ -78,6 +81,7 @@
                         <img v-if="ediForm.aPicture" :src="ediForm.aPicture" class="avatar">
                             <i v-else class="el-icon-plus avatar-uploader-icon" ></i>
                         </el-upload>
+                    </div>
                     </el-form-item>
                     <el-form-item label="难度系数预判：" prop="difficulty">
                         <el-input type="number" v-model="ediForm.difficulty" oninput="value=value.replace(/[^\d.]/g,'')"></el-input>

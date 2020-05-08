@@ -1,6 +1,7 @@
 <template>
     <div>
         <div class="container">
+           
             <div class="handle-box">
                 <el-button
                     type="danger"
@@ -8,7 +9,7 @@
                     class="handle-del mr10"
                     @click="delAllSelection"
                 >批量删除</el-button>
-                <el-select v-model="query.knowledgePoint" placeholder="知识点" class="handle-select mr10" style="width:200px;">
+                <el-select v-model="query.knowledgePoint" placeholder="知识点" class="handle-select mr10" style="width:190px;">
                     <el-option key="1" label="编译过程概述" value="编译过程概述"></el-option>
                     <el-option key="2" label="语言的形式化基础" value="语言的形式化基础"></el-option>
                     <el-option key="3" label="词法分析及词法分析程序" value="词法分析及词法分析程序"></el-option>
@@ -17,11 +18,11 @@
                     <el-option key="6" label="符号表管理" value="符号表管理"></el-option>
                     <el-option key="7" label="运行时的存储管理" value="运行时的存储管理"></el-option>
                 </el-select>
-                <el-select v-model="query.courseGoal" placeholder="课程目标" class="handle-select mr10" style="width:120px;">
+                <el-select v-model="query.courseGoal" placeholder="课程目标" class="handle-select mr10" style="width:110px;">
                     <el-option key="1" label="课程目标 1" value="课程目标1"></el-option>
                     <el-option key="2" label="课程目标 2" value="课程目标2"></el-option>
                 </el-select>
-                <el-select v-model="query.questionType" placeholder="题型" class="handle-select mr10" style="width:130px;">
+                <el-select v-model="query.questionType" placeholder="题型" class="handle-select mr10" style="width:115px;">
                     <el-option key="1" label="选择题" value="选择题"></el-option>
                     <el-option key="2" label="填空题" value="填空题"></el-option>
                     <el-option key="3" label="简答题" value="简答题"></el-option>
@@ -30,9 +31,13 @@
                     <el-option key="6" label="计算题" value="计算题"></el-option>
                     <el-option key="7" label="程序设计题" value="程序设计题"></el-option>
                 </el-select>
-                <el-button type="success" icon="el-icon-search" @click="handleSearch">搜索</el-button>
+               
+                <el-button type="success" style="margin-left:10px;" icon="el-icon-search" @click="handleSearch">搜索</el-button>
                 <el-button type="warning" icon="el-icon-refresh" @click="reset">重置</el-button>
+                <el-input v-model="key" placeholder="请输入关键字" style="width:130px;margin-left:3%;"></el-input>
+                 <el-button type="info" @click="blurSearch" style="margin-left:10px;">模糊查询</el-button>
             </div>
+            
             <el-table
                 :data="tableData.slice((currentPage-1)*pagesize,currentPage*pagesize)"
                 border
@@ -214,7 +219,7 @@
 </template>
 
 <script>
-import { fetchData } from '../../api/index';
+
 import axios from 'axios'
 export default {
     
@@ -225,6 +230,7 @@ export default {
                 courseGoal: '',
                 questionType:'',
             },
+            key:'',
 
             tableData: [],
             pagesize:5,
@@ -271,6 +277,27 @@ export default {
             this.query = {};
             this.getData();  
         },
+        blurSearch() {  
+                axios.get(this.GLOBAL.url+"question/blurSearch",{
+                params:{
+                    'key':this.key,
+                    }
+                })
+                .then(res =>{
+                    console.log(res.data.data);
+                    if(res.data.code === 0){
+                        this.tableData = res.data.data;
+                        this.currentPage = 1;
+                        this.key = '';
+                        this.$message.success("查询成功！");
+                    }
+                    else{
+                        this.$message.error("查询失败！");
+                    }
+                    
+                })
+                    
+        },
 
         // 触发搜索按钮
         handleSearch() {
@@ -284,8 +311,15 @@ export default {
             })
            .then(res =>{
               console.log(res.data.data);
-              this.tableData = res.data.data;
-              this.currentPage = 1;
+              if(res.data.code === 0){
+                  this.tableData = res.data.data;
+                 this.currentPage = 1;
+                 this.$message.success("查询成功！");
+              }
+              else{
+                  this.$message.error("查询失败！");
+              }
+              
            })
             
         },

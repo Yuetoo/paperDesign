@@ -9,10 +9,10 @@
             </el-breadcrumb>
         </div>
         <div class="container" >
-            <div class="plugins-tips" style="text-indent:2em;line-height:30px;font-size:16px;">
+            <!-- <div class="plugins-tips" style="text-indent:2em;line-height:30px;font-size:16px;">
                本课程是软件工程专业的专业限选课。课程主要讲授编译系统的结构及其各组成部分的设计原理与实现技术，包括编译程序的基本过程、语言的形式化基础、词法分析及词法分析程序、语法分析及语法分析程序、语义分析、中间代码生成、信息表格管理、运行时的存储分配。通过本课程的学习，学生能理解编译程序各个模块的基本原理和功能，能够掌握编译系统的基础理论、基本原理和方法，系统认识编译程序的结构和工作流程，以及编译程序的各组成部分的设计原理和实现技术；具备分析、设计、实现和维护编译系统的初步能力，能从语言翻译和表示变换的角度理解计算，在计算思维方面得到拓展提高。
-            </div>
-            <el-collapse>
+            </div> -->
+            <!-- <el-collapse>
                 <el-collapse-item title="  课程目标 1" name="1">
                     <div>掌握语言的形式化基础知识;</div>
                     <div>掌握有限自动机理论、正规文法与正规式的理论，理解源程序单词的表示方法、识别方法；</div>
@@ -30,19 +30,189 @@
                     <div>掌握属性翻译文法基础知识和基本原理及中间语言的生成技术，能综合运用掌握的基本原理和分析技术，对编译系统中的词法分析模块、语法分析模块和语义分析模块，选用或建立适当的模型进行表示和分析，并初步具备实现词法、语法、语义分析模块的能力；</div>
                     
                 </el-collapse-item>
-            </el-collapse>
-            <div style="text-align:center">
-                <el-button type="primary" style="margin-top:5%;" @click="openDialog">设置参数</el-button>
-            </div>
-        </div>
-        
+            </el-collapse> -->
+            <el-form :model="parameter">
+                <label style="color:#606266;">试卷结构：</label>
+                    <el-row style="padding-left:20px;">
+                        <el-col :span="6">
+                            <el-form-item style="margin-top:20px;" label="选择题">
+                                <el-input type="number" v-model="parameter.select" style="width:30%;"></el-input>
+                                <span style="margin-left:10px;color:#606266">道</span>
+                            </el-form-item>
+                        </el-col>
+                       <el-col :span="6">
+                            <el-form-item style="margin-top:20px;" label="填空题">
+                                <el-input type="number" v-model="parameter.blank" style="width:30%;"></el-input>
+                                <span style="margin-left:10px;color:#606266">道</span>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-form-item style="margin-top:20px;" label="简答题">
+                                <el-input type="number" v-model="parameter.QA" style="width:30%;"></el-input>
+                                <span style="margin-left:10px;color:#606266">道</span>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-form-item style="margin-top:20px;" label="证明题">
+                                <el-input type="number" v-model="parameter.testify" style="width:30%;"></el-input>
+                                <span style="margin-left:10px;color:#606266">道</span>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                     <el-row style="padding-left:20px;margin-bottom:20px;">
+                        <el-col :span="6">
+                            <el-form-item style="margin-top:20px;" label="分析题">
+                                <el-input type="number" v-model="parameter.analysis" style="width:30%;"></el-input>
+                                <span style="margin-left:10px;color:#606266">道</span>
+                            </el-form-item>
+                        </el-col>
+                       <el-col :span="6">
+                            <el-form-item style="margin-top:20px;" label="计算题">
+                                <el-input type="number" v-model="parameter.compute" style="width:30%;"></el-input>
+                                <span style="margin-left:10px;color:#606266">道</span>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-form-item style="margin-top:20px;" label="程序设计题">
+                                <el-input type="number" v-model="parameter.program" style="width:30%;"></el-input>
+                                <span style="margin-left:10px;color:#606266">道</span>
+                            </el-form-item>
+                        </el-col>
+                       
+                    </el-row>
+                    <label style="color:#606266;">目标参数：</label>
+                    <el-form label-position="right" label-width="125px">
+                        <el-form-item label="难度系数" style="margin-top:30px;">
+                            <el-input v-model="parameter.difficulty" style="width:30%;"></el-input>
+                        </el-form-item>
+                        <el-form-item label="课程目标1分值">
+                            <el-input v-model="parameter.course1" style="width:30%;"></el-input>
+                        </el-form-item>
+                        <el-form-item label="课程目标2分值">
+                            <el-input v-model="parameter.course2" style="width:30%;"></el-input>
+                        </el-form-item>
+                        <el-form-item>
+                            <el-button style="margin-left:2%;" type="primary" @click="autoCreate">生成试卷</el-button>
+                        </el-form-item>
+                    </el-form>
+            </el-form>
+                            <!--试卷预览-->
+        <el-dialog :visible.sync="previewVisible" width="60%">
+           <el-row style="margin:40px;border-bottom:1px dotted #C0C4CC;padding-bottom:20px;">
+                <el-col :span="7" style="margin-right:5%;">
+                    <div>总分值：</div>
+                    <el-progress :percentage="totalScore" :color="scoreColor"></el-progress>
+                    <div>难度系数：</div>
+                    <el-progress :percentage="parseInt(difficulty*100)" :color="difficultyColor"></el-progress>
+                </el-col>
+                <el-col style="text-align:center;margin-right:4%;" :span="4">
+                    <el-progress :width="90" type="circle" color="#7B68EE" :percentage="course1Score"></el-progress>
+                    <div>课程目标1占分值</div>
+                </el-col>
+                <el-col style="text-align:center" :span="4">
+                    <el-progress type="circle" :width='90' color="#F08080" :percentage="course2Score" ></el-progress>
+                    <div>课程目标2占分值</div>
+                </el-col> 
+                <el-col :span='4' style="display:flex;flex-direction:column;margin-left:6%;">
+                    <el-button style="width:100px;margin:10px;" @click="again">再来一次</el-button>
+                    <el-button style="width:100px;" @click="savePaper">保存试卷</el-button>
+                </el-col>         
+            </el-row>
+           <div style="width:100%;padding:30px 80px;"> 
+               <ol style="list-style-type:upper-roman;">
+                   <li v-if="sort.select.length">
+                       <h3 style="margin-bottom:20px;">选择题</h3>
+                        <ol style="font-size:15px;line-height:25px;">
+                            <li v-for="item in sort.select" :key="item.questionId">
+                                    <p>{{item.content}}</p>
+                                    <div style="width:100%;text-align:center;padding-top:20px;">
+                                        <el-image v-if="item.qPicture" :src="item.qPicture" style="width:30%;"></el-image>
+                                    </div>
+                            </li>
+                        </ol>
+                   </li>
+
+                   <li v-if="sort.blank.length">
+                       <h3 style="margin-bottom:20px;">填空题</h3>
+                        <ol style="font-size:15px;line-height:25px;">
+                            <li v-for="item in sort.blank" :key="item.questionId">
+                               
+                                    <p>{{item.content}}</p>
+                                    <div style="width:100%;text-align:center;padding-top:20px;">
+                                        <el-image v-if="item.qPicture" :src="item.qPicture" style="width:30%;"></el-image>
+                                    </div>
+                            </li>
+                        </ol>
+                   </li>
+                   <li v-if="sort.QA.length">
+                        <h3 style="margin-bottom:20px;">简答题</h3>
+                        <ol style="font-size:15px;line-height:25px;">
+                            <li v-for="item in sort.QA" :key="item.questionId">
+                                    <p>{{item.content}}</p>
+                                    <div style="width:100%;text-align:center;padding-top:20px;">
+                                        <el-image v-if="item.qPicture" :src="item.qPicture" style="width:30%;"></el-image>
+                                    </div>
+                            </li>
+                        </ol>
+                   </li>
+                   <li v-if="sort.testify.length">
+                       <h3 style="margin-bottom:20px;">证明题</h3>
+                        <ol style="font-size:15px;line-height:25px;">
+                            <li v-for="item in sort.testify" :key="item.questionId">
+                                    <p>{{item.content}}</p>
+                                    <div style="width:100%;text-align:center;padding-top:20px;">
+                                        <el-image v-if="item.qPicture" :src="item.qPicture" style="width:30%;"></el-image>
+                                    </div>
+                            </li>
+                        </ol>
+                   </li>
+                   <li v-if="sort.analysis.length">
+                       <h3 style="margin-bottom:20px;">分析题</h3>
+                        <ol style="font-size:15px;line-height:25px;">
+                            <li v-for="item in sort.analysis" :key="item.questionId">
+                                    <p>{{item.content}}</p>
+                                     <div style="width:100%;text-align:center;padding-top:20px;">
+                                        <el-image v-if="item.qPicture" :src="item.qPicture" style="width:30%;"></el-image>
+                                    </div>
+                            </li>
+                        </ol>
+                   </li>
+                   <li v-if="sort.compute.length">
+                        <h3 style="margin-bottom:20px;">计算题</h3>
+                        <ol style="font-size:15px;line-height:25px;">
+                            <li v-for="item in sort.compute" :key="item.questionId">
+                                    <p>{{item.content}}</p>
+                                     <div style="width:100%;text-align:center;padding-top:20px;">
+                                        <el-image v-if="item.qPicture" :src="item.qPicture" style="width:30%;"></el-image>
+                                    </div>
+                            </li>
+                        </ol>
+                   </li>
+                   <li v-if="sort.program.length">
+                        <h3 style="margin-bottom:20px;">程序设计题</h3>
+                        <ol style="font-size:15px;line-height:25px;">
+                            <li v-for="item in sort.program" :key="item.questionId">
+                                    <p>{{item.content}}</p>
+                                    <div style="width:100%;text-align:center;padding-top:20px;">
+                                        <el-image v-if="item.qPicture" :src="item.qPicture" style="width:30%;"></el-image>
+                                    </div>
+                            </li>
+                        </ol>
+                   </li>
+               </ol>    
+           </div>
+        </el-dialog>
+        <div v-if="loading" style="font-size:100px;color:#C0C4CC;position:absolute;top:40%;left:40%;">
+            <i class="el-icon-loading"></i>
+        </div> 
     </div>
-   
+</div>  
 </template>
 
 <script>
-import { fetchData } from '../../api/index';
-import axios from 'axios'
+
+import axios from 'axios';
+
 export default {
 
     data() {
@@ -61,25 +231,37 @@ export default {
             totalScore:0,
             difficulty:0,
             course1Score:0,
-            course2Score:0,
-
-            tableData:[],
-            resultData:[],
-           
-            
-            multipleSelection:[],
-      
-            createVisible:false,
-            selectPaper:false,
-           
+            course2Score:0, 
+           parameter:{
+               select:0,
+               blank:3,
+               QA:3,
+               analysis:3,
+               compute:2,
+               program:1,
+               testify:1,
+               difficulty:0.5,
+               course1:53,
+               course2:47
+           },
+           previewVisible:false,
+           sort:{
+                select:[],
+                blank:[],
+                QA:[],
+                testify:[],
+                analysis:[],
+                compute:[],
+                program:[]
+            },
+            questions:[],
+            loading: false
         };
     },
     created() {
     },
     methods: {
-        
-       
-        openDialog(){
+    openDialog(){
            
             axios.get(this.GLOBAL.url+'autoCreate/create')
             .then(res =>{
@@ -98,7 +280,7 @@ export default {
             param['difficulty'] = this.difficulty;
             param['course1Score'] = this.course1Score;
             param['course2Score'] = this.course2Score;
-            let questionIds = this.resultData.map(item =>{
+            let questionIds = this.questions.map(item =>{
                 return item.questionId;
             });
             
@@ -122,11 +304,75 @@ export default {
           });       
         });
     },
-}
+    again(){
+        this.previewVisible = false;
+        this.autoCreate();
+    },
+    autoCreate(){
+        this.loading = true;
+        console.log("parameter",this.parameter);
+        axios.get(this.GLOBAL.url+'autoCreate/create',{
+            params:this.parameter
+        })
+        .then(res =>{
+            console.log(res.data);
+            this.loading = false;
+            let data = res.data;
+            this.questions = data.genes;
+            this.course1Score = data.course1;
+            this.course2Score = data.course2;
+            this.totalScore = data.course1 + data.course2;
+            this.difficulty = data.difficulty;
+            this.sortType(data.genes);
+            this.previewVisible = true;
+        })
+    },
+         //试题分类
+    sortType:function(arr){
+            this.sort ={
+                select:[],
+                blank:[],
+                QA:[],
+                testify:[],
+                analysis:[],
+                compute:[],
+                program:[]
+            };
+            for(let i = 0;i<arr.length;i++){
+                if(arr[i].questionType === '选择题'){
+                    this.sort.select.push(arr[i]);
+                }
+                if(arr[i].questionType === '填空题'){
+                    this.sort.blank.push(arr[i]);
+                }
+                if(arr[i].questionType === '简答题'){
+                    this.sort.QA.push(arr[i]);
+                }
+                if(arr[i].questionType === '证明题'){
+                    this.sort.testify.push(arr[i]);
+                }
+                if(arr[i].questionType === '分析题'){
+                    this.sort.analysis.push(arr[i]);
+                }
+                if(arr[i].questionType === '计算题'){
+                    this.sort.compute.push(arr[i]);
+                }
+                if(arr[i].questionType === '程序设计题'){
+                    this.sort.program.push(arr[i]);
+                }
+            }
+        }
+    }
+
 };
 </script>
 
 <style scoped>
+
+*{
+    box-sizing: border-box;
+}
+
 .handle-box {
     margin-bottom: 20px;
 }

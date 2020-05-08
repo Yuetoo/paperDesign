@@ -12,6 +12,7 @@ var questionRouter = require('./routes/questionAdmin');
 var paperRouter = require('./routes/paperAdmin');
 var bulletinRouter = require('./routes/bulletinAdmin');
 var autoCreate = require('./routes/algorithm');
+var importExcel = require('./routes/importExcel');
 
 var url = 'http://localhost:8080';
 
@@ -61,6 +62,7 @@ app.use('/question',questionRouter);
 app.use('/paper',paperRouter);
 app.use('/bulletin',bulletinRouter);
 app.use('/autoCreate',autoCreate);
+app.use('/importExcel',importExcel);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

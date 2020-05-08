@@ -159,29 +159,96 @@ router.get("/analysisData",function(req,res,next){
 
 //录入试卷数据
 router.post("/addAnalysis",function(req,res,next){
-    let analy = req.body;
-    reformat(analy);
-    console.log(analy);
-    analysis.destroy({
-        'where':{
-            paperId:analy.paperId
+    let obj =  req.body;
+    obj.classNum = String(obj.classNum);
+    obj.max = parseInt(obj.max);
+    obj.date = obj.date.toString();
+    obj.min = parseInt(obj.min);
+    obj.gpa = parseFloat(obj.gpa);
+    obj.sd = parseFloat(obj.sd);
+    console.log("2",obj);
+    analysis.findAll({
+        'where': {
+            'paperId': obj.paperId
+        }
+    }).then(async(result) => {
+        console.log(result);
+        if(result.length){
+            let analy;
+          if(result[0].classNum2 == null){
+            analy = await format(obj,'2');   
+          }
+          else if(result[0].classNum3 == null){
+            analy = await format(obj,'3');
+          }
+          else if(result[0].classNum4 == null){
+            analy = await format(obj,'4');
+          }
+          else if(result[0].classNum5 == null){
+            analy = await format(obj,'5');
+          }
+          else{
+              res.json({
+                  code:1,
+                  msg:"记录已满！添加失败！"
+              });
+              return;
+          }
+          analysis.update(analy,{
+            'where':{
+                'paperId':analy.paperId
+            }
+          })
+          .then(r =>{
+            if(r[0] == 1){
+                res.json({
+                    code:0,
+                    msg:'添加成功！'
+                })
+            }else{
+                res.json({
+                    code:1,
+                    msg:'添加失败！'
+                })
+            };
+          });
+
+        }
+        else{
+            console.log("没有数据！");
+            let a = await format(obj,'1');
+            analysis.create(a).then(result =>{
+                console.log(result.dataValues);
+                if(result.dataValues){
+                    res.json({
+                        code:0,
+                        msg:'添加成功！'
+                    })
+                }else{
+                    res.json({
+                        code:1,
+                        msg:'添加失败！'
+                    })
+                };
+            })
         }
     });
-    analysis.create(analy).then(result =>{
-        console.log(result.dataValues);
-        if(result.dataValues){
-            res.json({
-                code:0,
-                msg:'更新成功！'
-            })
-        }else{
-            res.json({
-                code:1,
-                msg:'更新失败！'
-            })
-        };
-    });
 });
+
+
+function format(obj,num){
+    return new Promise(resolve=>{
+        let analy = {};
+        analy.paperId = obj.paperId;
+        analy['classNum'+ num] = obj.classNum;
+        analy['date' + num] = obj.date;
+        analy['max' + num] = obj.max;
+        analy['min' + num] = obj.min;
+        analy['gpa' + num] = obj.gpa;
+        analy['sd' + num] = obj.sd;
+        resolve(analy);
+    });
+}
 
 //统计知识点
 router.get("/countPoint",function(req,res,next){
@@ -239,44 +306,6 @@ router.get("/countPoint",function(req,res,next){
 
 
 
-//格式转换
-function reformat(obj){
-    if(obj['max1']){
-        obj.max1 = parseInt(obj.max1);
-    }
-    if(obj['max2']){
-        obj.max2 = parseInt(obj.max2);
-    }
-    if(obj['max3']){
-        obj.max3 = parseInt(obj.max3);
-    }
-    if(obj['min1']){
-        obj.min1 = parseInt(obj.min1);
-    }
-    if(obj['min2']){
-        obj.min2 = parseInt(obj.min2);
-    }
-    if(obj['min3']){
-        obj.min3 = parseInt(obj.min3);
-    }
-    if(obj['gpa1']){
-        obj.gpa1 = parseFloat(obj.gpa1);
-    }
-    if(obj['gpa2']){
-        obj.gpa2 = parseFloat(obj.gpa2);
-    }
-    if(obj['gpa3']){
-        obj.gpa3 = parseFloat(obj.gpa3);
-    }
-    if(obj['sd1']){
-        obj.sd1 = parseFloat(obj.sd1);
-    }
-    if(obj['sd2']){
-        obj.sd2 = parseFloat(obj.sd2);
-    }
-    if(obj['sd3']){
-        obj.sd3 = parseFloat(obj.sd3);
-    }
-};
+
 
 module.exports = router;

@@ -2,102 +2,139 @@
     <div>
         <div class="crumbs">
             <el-breadcrumb separator="/">
-                <el-breadcrumb-item><i class="el-icon-lx-calendar"></i> 表单</el-breadcrumb-item>
-                <el-breadcrumb-item>图片上传</el-breadcrumb-item>
+                <el-breadcrumb-item><i class="el-icon-lx-calendar"></i> 试题录入</el-breadcrumb-item>
+                <el-breadcrumb-item>批量导入</el-breadcrumb-item>
             </el-breadcrumb>
         </div>
         <div class="container">
-            <div class="content-title">支持拖拽</div>
-            <div class="plugins-tips">
-                Element UI自带上传组件。
-                访问地址：<a href="http://element.eleme.io/#/zh-CN/component/upload" target="_blank">Element UI Upload</a>
+            <div class="content-title">说明</div>
+            <div class="plugins-tips" style="padding-left:50px;">
+                <ul>
+                    <li style="margin-bottom:20px;">此方式仅支持无图片导入</li>
+                    <li>请下载提供的excel模板，为确保试题的准确录入，请按照模板格式填写</li>
+                </ul>
+                
             </div>
-            <el-upload
-                class="upload-demo"
-                drag
-                action="http://jsonplaceholder.typicode.com/api/posts/"
-                multiple>
-                <i class="el-icon-upload"></i>
-                <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-                <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>
-            </el-upload>
-            <div class="content-title">支持裁剪</div>
-            <div class="plugins-tips">
-                vue-cropperjs：一个封装了 cropperjs 的 Vue 组件。
-                访问地址：<a href="https://github.com/Agontuk/vue-cropperjs" target="_blank">vue-cropperjs</a>
-            </div>
-            <div class="crop-demo">
-                <img :src="cropImg" class="pre-img">
-                <div class="crop-demo-btn">选择图片
-                    <input class="crop-input" type="file" name="image" accept="image/*" @change="setImage"/>
-                </div>
-            </div>
-        
-            <el-dialog title="裁剪图片" :visible.sync="dialogVisible" width="30%">
-                <vue-cropper ref='cropper' :src="imgSrc" :ready="cropImage" :zoom="cropImage" :cropmove="cropImage" style="width:100%;height:300px;"></vue-cropper>
-                <span slot="footer" class="dialog-footer">
-                    <el-button @click="cancelCrop">取 消</el-button>
-                    <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
-                </span>
-            </el-dialog>
+          
+
+           
+            <!-- excel上传与下载 -->
+             <el-row>
+                 <el-col :span="2">
+                    <a :href=url><el-button style="width:100%;">模板下载</el-button></a>
+                 </el-col>
+                 <el-col :span="2" style="margin-left:5%;">
+                      <el-upload
+                             class="upload-demo"
+                            style="padding:0px;"
+                             ref="upload"
+                             action="doUpload"
+                             :limit="1"
+                             :before-upload="beforeUpload">
+                           
+                             <el-button style="width:100%;" type="primary">上传excel</el-button>
+                             
+            
+                        </el-upload> 
+                 </el-col>
+                 
+                       
+        </el-row>
+        </div>
+        <div v-if="loading" style="font-size:100px;color:#C0C4CC;position:absolute;top:40%;left:40%;">
+            <i class="el-icon-loading"></i>
         </div>
     </div>
 </template>
 
 <script>
-    import VueCropper  from 'vue-cropperjs';
+    
+    import axios from 'axios';
     export default {
         name: 'upload',
         data: function(){
             return {
-                defaultSrc: require('../../assets/img/img.jpg'),
-                fileList: [],
-                imgSrc: '',
-                cropImg: '',
-                dialogVisible: false,
+               loading:false,
+               url:this.GLOBAL.url+'demo/demo.xlsx'
             }
         },
         components: {
             VueCropper
         },
         methods:{
-            setImage(e){
-                const file = e.target.files[0];
-                if (!file.type.includes('image/')) {
-                    return;
+            beforeUpload(file){
+                // console.log(file,'文件');
+                this.files = file;
+                const extension = file.name.split('.')[1] === 'xls'
+                const extension2 = file.name.split('.')[1] === 'xlsx'
+               
+                if (!extension && !extension2) {
+                    this.$message.warning('上传模板只能是 xls、xlsx格式!')
+                    return
                 }
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    this.dialogVisible = true;
-                    this.imgSrc = event.target.result;
-                    this.$refs.cropper && this.$refs.cropper.replace(event.target.result);
-                };
-                reader.readAsDataURL(file);
+                
+                 this.$confirm('确定上传文件 '+file.name+'?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                    }).then(() => {
+                       this.loading = true;
+                       this.fileName = file.name;
+                        
+                        setTimeout(() => {
+                            this.submitUpload();
+                        },2000);
+                    }).catch(() => {
+                        this.$message({
+                            type: 'info',
+                            message: '已取消上传！'
+                        });          
+                    });
+                
+                return false; // 返回false不会自动上传
+            },   
+         
+            // 上传excel
+            submitUpload() {
+                
+                console.log('上传'+this.files.name)
+                if(this.fileName == ""){
+                    this.$message.warning('请选择要上传的文件！')
+                    return false
+                }
+                let fileFormData = new FormData();
+                fileFormData.append("code", "t_pathology_info_excel");
+                fileFormData.append("description", "excel上传测试");
+                //filename是键，file是值，就是要传的文件，test是要传的文件名
+                fileFormData.append('files', this.files, this.fileName);
+                let requestConfig = {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    },
+                }
+                // 执行上传excel
+                let id = '';
+                console.log(fileFormData.get('files'));
+                axios.post(this.GLOBAL.url+'importExcel/upload', fileFormData, requestConfig)
+                .then(resp => {
+                    if (resp.data.code != 200) {
+                        this.$message.error("excel上传失败，请重新上传");
+                    } else {
+                        this.loading = false;
+                        this.$message.success("已成功上传至数据库！");
+                    }
+                })
             },
-            cropImage () {
-                this.cropImg = this.$refs.cropper.getCroppedCanvas().toDataURL();
-            },
-            cancelCrop(){
-                this.dialogVisible = false;
-                this.cropImg = this.defaultSrc;
-            },
-            imageuploaded(res) {
-                console.log(res)
-            },
-            handleError(){
-                this.$notify.error({
-                    title: '上传失败',
-                    message: '图片上传接口上传失败，可更改为自己的服务器接口'
-                });
-            }
-        },
-        created(){
-            this.cropImg = this.defaultSrc;
-        }
+           
+    },
+    created(){
+            
     }
+}
 </script>
 
 <style scoped>
+
     .content-title{
         font-weight: 400;
         line-height: 50px;
@@ -138,4 +175,12 @@
         opacity: 0;
         cursor: pointer;
     }
+</style>
+
+<style>
+.el-upload--text{
+    height:100%;
+    width:100%;
+    border:none;
+}
 </style>
