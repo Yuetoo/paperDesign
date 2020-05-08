@@ -17,7 +17,7 @@ router.get("/create",async function(req,res,next){
         computeNum = parseInt(param.compute),
         programNum = parseInt(param.program);  
         //算法相关参数
-    let FITNESS = 1.9, COUNT = 40,count = 0,size = 50,init = true,mutationRate = 0.004; //变异概率在 0.001~0.1 之间最佳;
+    let FITNESS = 0.9, COUNT = 40,count = 0,size = 50,init = true,mutationRate = 0.004; //变异概率在 0.001~0.1 之间最佳;
     //初始化种群
     let population = await initialise(size,init,ep,COURSE1,COURSE2,selectNum,blankNum,QANum,testifyNum,analysisNum,computeNum,programNum);
     while(population.fittest.fitness < FITNESS && count != COUNT){
@@ -82,17 +82,17 @@ Paper.prototype = {
        
     } 
 }
-/**  f(适应度) = f(难度系数) + f(课程目目标)     这里我设置难度系数和课程目标的权重都为1
+/**  f(适应度) = f(难度系数)*0.5 + f(课程目目标)*0.5    这里我设置难度系数和课程目标的权重都为0.5
  *   f(难度系数) = 1 - | EP(期望试卷难度) - P(试卷难度) |
  *   f(课程目标) = 1 - | 期望目标1分值 - 目标1分值 |*0.5 - | 期望目标2分值 - 目标2分值 |*0.5
- *   适应度函数 = 2 - |EP - P| - |(COURSE1 - course1)/100|*0.5 - |(COURSE2 - course2)/100|*0.5
+ *   适应度函数 = 1 - |EP - P|*0.5 - |(COURSE1 - course1)/100|*0.25 - |(COURSE2 - course2)/100|*0.25
 **/
 function getFitness(ep,difficulty,COURSE1,COURSE2,course1,course2){
     return new Promise(resolve =>{
-        let factor1 = parseFloat(Math.abs(ep - difficulty).toFixed(2));
-        let factor2 = parseFloat((Math.abs((COURSE1 - course1)/100)*0.5).toFixed(2));
-        let factor3 = parseFloat((Math.abs((COURSE2 - course2)/100)*0.5).toFixed(2));
-        let result = parseFloat((2 - factor1 - factor2 - factor3).toFixed(2));
+        let factor1 = parseFloat((Math.abs(ep - difficulty)*0.5).toFixed(2));
+        let factor2 = parseFloat((Math.abs((COURSE1 - course1)/100)*0.25).toFixed(2));
+        let factor3 = parseFloat((Math.abs((COURSE2 - course2)/100)*0.25).toFixed(2));
+        let result = parseFloat((1 - factor1 - factor2 - factor3).toFixed(2));
         resolve(result);
         
     })

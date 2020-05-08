@@ -84,10 +84,10 @@
                     </div>
                     </el-form-item>
                     <el-form-item label="难度系数预判：" prop="difficulty">
-                        <el-input type="number" v-model="ediForm.difficulty" oninput="value=value.replace(/[^\d.]/g,'')"></el-input>
+                        <el-input v-model="ediForm.difficulty" oninput="value=value.replace(/[^\d.]/g,'')"></el-input>
                     </el-form-item>
                         <el-form-item label="分值：" prop="score">
-                            <el-input type="number" v-model="ediForm.score"></el-input>
+                            <el-input  v-model="ediForm.score"></el-input>
                         </el-form-item>
                      <el-form-item style="margin-top:10%;margin-left:80%;">
                         <el-button type="primary" @click="saveEdit">立即创建</el-button>

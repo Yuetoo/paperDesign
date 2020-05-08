@@ -21,7 +21,7 @@
             <!-- excel上传与下载 -->
              <el-row>
                  <el-col :span="2">
-                    <a :href=url><el-button style="width:100%;">模板下载</el-button></a>
+                    <a :href = url><el-button style="width:100%;">模板下载</el-button></a>
                  </el-col>
                  <el-col :span="2" style="margin-left:5%;">
                       <el-upload
@@ -51,16 +51,14 @@
     
     import axios from 'axios';
     export default {
-        name: 'upload',
+        
         data: function(){
             return {
                loading:false,
                url:this.GLOBAL.url+'demo/demo.xlsx'
             }
         },
-        components: {
-            VueCropper
-        },
+        
         methods:{
             beforeUpload(file){
                 // console.log(file,'文件');

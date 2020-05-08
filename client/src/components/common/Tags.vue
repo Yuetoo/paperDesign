@@ -23,7 +23,7 @@
 </template>
 
 <script>
-  
+  import bus from '../common/bus.js'
     export default {
         data() {
             return {
