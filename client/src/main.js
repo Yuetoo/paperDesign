@@ -24,7 +24,6 @@ Vue.use(ElementUI, {
     size: 'small'
 });
 
-
 router.beforeEach((to, from, next) => {
     const role = sessionStorage.getItem('userName');
     if (!role && to.path !== '/') {

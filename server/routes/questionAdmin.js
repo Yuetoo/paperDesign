@@ -13,7 +13,6 @@ var storage = multer.diskStorage({
     destination: function (req, file, cb) {
         // 接收到文件后输出的保存路径（若不存在则需要创建）
         cb(null, 'public/upload/');
-
     },
     filename: function (req, file, cb) {
         // 将保存文件名设置为 时间戳 + 文件原始名，比如 151342376785-123.jpg
@@ -61,6 +60,7 @@ router.get('/questionList', function (req, res, next) {
           })
       })
 });
+
 
 // 试题查询
 router.get('/search', function (req, res, next) {
@@ -214,22 +214,20 @@ router.post('/deleteQuestion',function(req,res,next){
     });
 });
 
+
 //创建试题
 router.post('/createQuestion', upload.fields([{name:'qPicture'},{name:"aPicture"}]), function (req, res, next) {
     let qPicture = req.files['qPicture'];
     let aPicture = req.files['aPicture'];
     let qPictureUrl,aPictureUrl; 
     let ediForm = JSON.parse(req.body.ediForm);
-   
     if(req.files['qPicture']){
         qPictureUrl = url + 'public/upload/'+ qPicture[0].filename;
         ediForm.qPicture = qPictureUrl;
-        console.log(ediForm);
     }
     if(req.files['aPicture']){
         aPictureUrl = url + 'public/upload/'+ aPicture[0].filename;
         ediForm.aPicture = aPictureUrl;
-        console.log(ediForm);
     }
     question.create(ediForm).then(result =>{
         if(result.dataValues){

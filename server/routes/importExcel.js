@@ -17,6 +17,7 @@ var storage = multer.diskStorage({
     }
 });
 
+
 var createFolder = function (folder) {
     try {
         // 测试 path 指定的文件或目录的用户权限,我们用来检测文件是否存在

@@ -16,21 +16,17 @@ router.get("/create",async function(req,res,next){
         analysisNum = parseInt(param.analysis),
         computeNum = parseInt(param.compute),
         programNum = parseInt(param.program);  
-        //算法相关参数
+    //算法相关参数
     let FITNESS = 0.9, COUNT = 40,count = 0,size = 50,init = true,mutationRate = 0.004; //变异概率在 0.001~0.1 之间最佳;
     //初始化种群
     let population = await initialise(size,init,ep,COURSE1,COURSE2,selectNum,blankNum,QANum,testifyNum,analysisNum,computeNum,programNum);
     while(population.fittest.fitness < FITNESS && count != COUNT){
-        //选择
-        let selection = await select(population,48);
-        //交叉
-        population = await cross(selection,50,ep,COURSE1,COURSE2);
-        if(population.fittest.fitness < FITNESS && count != COUNT){
-            //变异
+        let selection = await select(population,48); // 选择
+        population = await cross(selection,50,ep,COURSE1,COURSE2); //交叉
+        if(population.fittest.fitness < FITNESS){
             for(let i = 0;i<population.test.length;i++){
-                population.test[i] = await change(population.test[i],mutationRate);
-                //计算适应度
-                population.test[i].fitness = await getFitness(
+                population.test[i] = await change(population.test[i],mutationRate); //变异
+                population.test[i].fitness = await getFitness(          //计算适应度
                     ep,
                     population.test[i].difficulty,
                     COURSE1,
@@ -47,6 +43,7 @@ router.get("/create",async function(req,res,next){
     console.log("result:",population.fittest);
     res.json(population.fittest);
 });
+
 
 //试卷
 function Paper(){
@@ -188,7 +185,6 @@ function initialise(size,init,ep,COURSE1,COURSE2,selectNum,blankNum,QANum,testif
                 let paper = await getTest(selectNum,blankNum,QANum,testifyNum,analysisNum,computeNum,programNum);
                 paper.initData();
                 paper.fitness = await getFitness(ep,paper.difficulty,COURSE1,COURSE2,paper.course1,paper.course2);
-                console.log("第",i,"个paper:",paper);
                 population.test[i] = paper;
                 if(i === size - 1){
                     population.getFittest();
@@ -196,9 +192,7 @@ function initialise(size,init,ep,COURSE1,COURSE2,selectNum,blankNum,QANum,testif
                 }    
             }
         }
-    });
-        
-    
+    });   
 }
 //选择算子  轮盘赌选择
 function select(population,count){
@@ -211,11 +205,8 @@ function select(population,count){
         }
         while(times!=count){
             let random = Math.random()*totalAdaptation,degree = 0;
-           // console.log("random:",random);
-           // console.log("population.test.length",population.test.length);
             for(let j = 0;j<population.test.length;j++){
                 degree += population.test[j].fitness;
-               // console.log("degree",degree);
                 if(degree >= random){
                     //查重
                     if(!selected[j]){

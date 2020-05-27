@@ -47,6 +47,7 @@
                             </el-form-item>
                         </el-col>
                     </el-form-item>
+                    
                     <el-form-item label="题目" prop="content">
                         <el-input v-model="ediForm.content" placeholder="请在这里写下题目..."  type="textarea" :rows="10"></el-input>
                     </el-form-item> 
@@ -82,6 +83,7 @@
                             <i v-else class="el-icon-plus avatar-uploader-icon" ></i>
                         </el-upload>
                     </div>
+                    
                     </el-form-item>
                     <el-form-item label="难度系数预判：" prop="difficulty">
                         <el-input v-model="ediForm.difficulty" oninput="value=value.replace(/[^\d.]/g,'')"></el-input>
@@ -159,23 +161,17 @@ export default {
             };
         },
         // 创建试题
-        saveEdit() {
-          
+        saveEdit() {    
           this.$refs.form.validate(valid => {  
                 if (valid) {
-                    var vm = this;
                     this.param.delete('ediForm');
                     this.param.append('ediForm',JSON.stringify(this.ediForm));
-                    console.log(this.ediForm);
-                    console.log(this.param.get('qPicture'));
                     let config = {
-                    headers: {
-                        'Content-Type': 'multipart/form-data'
-                    }
-                };
-         
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
+                        }
+                    };
                     axios.post(this.GLOBAL.url+"question/createQuestion",this.param,config).then(res =>{
-                        console.log(res.data);
                         if(res.data.code===0){
                             this.$message.success("添加成功！");
                         }else{
@@ -185,11 +181,8 @@ export default {
                         this.param.delete('aPicture');
                         this.reset();
                     });
-
-
                 } else {
                     this.$message.error('您输入的格式有误！');
-                    console.log('error submit!!');
                     return false;
                 }
              });  

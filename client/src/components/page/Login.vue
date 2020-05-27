@@ -55,6 +55,7 @@ export default {
                         .then(function (response) {       //收到的数据
                             console.log(response.data.data);   //展示数据（看看是否拿到，和数据长啥样） 
                            
+                           
                            if(response.data.code===0){
                                 vm.$message.success('登录成功');
                                 let userName = response.data.data.userName,

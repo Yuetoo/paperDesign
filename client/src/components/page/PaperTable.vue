@@ -221,6 +221,8 @@
                
                 <el-button type="success" icon="el-icon-search" @click="handleSearch">搜索</el-button>
                 <el-button type="warning" icon="el-icon-refresh" @click="reset">重置</el-button>
+                <el-input v-model="key" placeholder="请输入关键字" style="width:130px;margin-left:3%;"></el-input>
+                 <el-button type="info" @click="blurSearch" style="margin-left:10px;">模糊查询</el-button>
                 </el-row>
             </div>
             
@@ -436,6 +438,8 @@ export default {
             updateVisible:false,
             updateForm:{},
 
+            key:'',
+
             previewVisible:false,
             previewItem:{},
             editPreview:false,
@@ -623,13 +627,41 @@ export default {
                }
             })
            .then(res =>{
-              console.log(res.data.data);
-              this.tableData = res.data.data;
-              this.currentPage = 1;
+             console.log(res.data.data);
+              if(res.data.code === 0){
+                  this.tableData = res.data.data;
+                 this.currentPage = 1;
+                 this.$message.success("查询成功！");
+              }
+              else{
+                  this.$message.error("查询失败！");
+              }
+              
            })
             
         },
        
+        blurSearch() {  
+                axios.get(this.GLOBAL.url+"question/blurSearch",{
+                params:{
+                    'key':this.key,
+                    }
+                })
+                .then(res =>{
+                    console.log(res.data.data);
+                    if(res.data.code === 0){
+                        this.tableData = res.data.data;
+                        this.currentPage = 1;
+                        this.key = '';
+                        this.$message.success("查询成功！");
+                    }
+                    else{
+                        this.$message.error("查询失败！");
+                    }
+                    
+                })
+                    
+        },
         /**
          * 跟据当前索引位置删除数据
          * 同时把该条删除的数据添加到左边待选table中

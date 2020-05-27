@@ -118,52 +118,49 @@
 
         <!-- 编辑弹出框 -->
         <el-dialog title="编辑" :visible.sync="editVisible" width="70%">
-            <el-form ref="form" :model="ediForm" label-width="70px">
-                <el-form-item label="题目">
-                    <el-col :span="11">
-                        <el-input v-model="ediForm.content" type="textarea" :rows="9"></el-input>
-                    </el-col>
-                    <el-col :span="10.5" style="margin-left:20px;">
-                        <el-upload
-                        class="avatar-uploader"
-                        
-                        action="aaa"
-                        :show-file-list="false"
-                        
-                        :on-change="handleChange"
-                        :auto-upload="false"
-                        :data="ediForm"
-                        
-                       >
-                            <img v-if="ediForm.qPicture" style="width:100%;" :src="ediForm.qPicture" class="avatar">
+            <el-form ref="form" :model="ediForm" label-width="70px" label-position='left' style="margin-left:50px;" >
+                <el-form-item label="题目" prop="content">
+                        <el-input v-model="ediForm.content" placeholder="请在这里写下题目..." style="width:90%;"  type="textarea" :rows="10"></el-input>
+                    </el-form-item> 
+                    <el-form-item label="题目图片">
+                        <div style="margin-left:calc((40%-360px)/2);width:360px;height:178px;border:1px dotted #DCDFE6;">
+                            <el-upload
+                            style="width:100%;height:100%;"
+                            class="avatar-uploader"
+                            action="aaa"
+                            :show-file-list="false"
+                            :on-change="handleChange"
+                            :auto-upload="false"
+                            :data="ediForm">
+                                <img v-if="ediForm.qPicture" :src="ediForm.qPicture" class="avatar">
+                                <i v-else class="el-icon-plus avatar-uploader-icon" ></i>
+                            </el-upload>
+                        </div>
+                    </el-form-item>
+                   <el-form-item label="答案" prop="answer">
+                        <el-input v-model="ediForm.answer" placeholder="请在这里写下这道题的答案..." style="width:90%;"  type="textarea" :rows="10"></el-input>
+                    </el-form-item> 
+                    <el-form-item label="答案图片">
+                         <div style="margin-left:calc((40%-360px)/2);width:360px;height:178px;border:1px dotted #DCDFE6;">
+                            <el-upload
+                            class="avatar-uploader"
+                            style="width:100%;height:100%;"
+                            action="aaa"
+                            :show-file-list="false"
+                            :on-change="hdChange"
+                            :auto-upload="false"
+                            :data="ediForm">    
+                        <img v-if="ediForm.aPicture" :src="ediForm.aPicture" class="avatar">
                             <i v-else class="el-icon-plus avatar-uploader-icon" ></i>
                         </el-upload>
-                    </el-col>
-                </el-form-item>
+                    </div>
+                    
+                    </el-form-item>
 
-                <el-form-item label="答案">
-                    <el-col :span="11">
-                        <el-input v-model="ediForm.answer" type="textarea" :rows="9"></el-input>
-                    </el-col>
-                   <el-col :span="10.5" style="margin-left:20px;">
-                        <el-upload
-                        class="avatar-uploader"
-                        action="aaa"
-                        :show-file-list="false"
-                       
-                        
-                        :on-change="hdChange"
-                        :auto-upload="false"
-                        :data="ediForm">
-                            <img v-if="ediForm.aPicture" style="width:100%;" :src="ediForm.aPicture" class="avatar">
-                            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-                        </el-upload>
-                   </el-col>
 
-                </el-form-item>
             <el-form-item>
                 <el-col :span="6">
-                    <el-select v-model="ediForm.knowledgePoint" placeholder="知识点" class="handle-select mr10" style="width:200px;">
+                    <el-select v-model="ediForm.knowledgePoint" placeholder="知识点" class="handle-select mr10" style="width:190px;">
                         <el-option key="1" label="编译过程概述" value="编译过程概述"></el-option>
                         <el-option key="2" label="语言的形式化基础" value="语言的形式化基础"></el-option>
                         <el-option key="3" label="词法分析及词法分析程序" value="词法分析及词法分析程序"></el-option>
@@ -173,14 +170,14 @@
                         <el-option key="7" label="运行时的存储管理" value="运行时的存储管理"></el-option>
                     </el-select>
                 </el-col>
-                <el-col :span="4" style="margin-left:10px;">
-                    <el-select v-model="ediForm.courseGoal" placeholder="课程目标" class="handle-select mr10" style="width:120px;">
+                <el-col :span="4" style="margin-left:20px;">
+                    <el-select v-model="ediForm.courseGoal" placeholder="课程目标" class="handle-select mr10" style="width:100px;">
                         <el-option key="1" label="课程目标 1" value="课程目标1"></el-option>
                         <el-option key="2" label="课程目标 2" value="课程目标2"></el-option>
                     </el-select>
                 </el-col>
                 <el-col :span="4">
-                    <el-select v-model="ediForm.questionType" placeholder="题型" class="handle-select mr10" style="width:130px;">
+                    <el-select v-model="ediForm.questionType" placeholder="题型" class="handle-select mr10" style="width:90px;">
                         <el-option key="1" label="选择题" value="选择题"></el-option>
                         <el-option key="2" label="填空题" value="填空题"></el-option>
                         <el-option key="3" label="简答题" value="简答题"></el-option>
@@ -525,8 +522,8 @@ export default {
     text-align: center;
   }
   .avatar {
-    width:178px;
-    height: 178px;
+    width:100%;
+    height: 100%;
     display: block;
   }
 
